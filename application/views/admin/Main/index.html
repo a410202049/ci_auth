@@ -1,0 +1,92 @@
+<?php $this->load->view('admin/Common/nav.html');?>
+<div class="row">
+   <div class="col-lg-6">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>个人信息</h5>
+                <div class="ibox-tools">
+                    <a class="collapse-link">
+                        <i class="fa fa-chevron-up"></i>
+                    </a>
+                    <a class="close-link">
+                        <i class="fa fa-times"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="ibox-content">
+            
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>用户帐号：</td>
+                            <td><?php echo $userinfo['username'];?></td>
+                        </tr>
+                        <tr>
+                            <td>用户角色：</td>
+                            <td><?php echo $userinfo['groupname'];?></td>
+                        </tr>
+                        <tr>
+                            <td>上次登陆IP:：</td>
+                            <td><?php echo $userinfo['last_login_ip'];?></td>
+                        </tr>
+                        <tr>
+                            <td>上次登陆地址：</td>
+                            <td><?php echo $userinfo['address']['country'];?></td>
+                        </tr>
+                        <tr>
+                            <td>上次登陆时间：</td>
+                            <td><?php echo date('Y-m-d H:i:s',$userinfo['last_login_time']);?></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+   </div>
+   <div class="col-lg-6">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5>系统信息</h5>
+                <div class="ibox-tools">
+                    <a class="collapse-link">
+                        <i class="fa fa-chevron-up"></i>
+                    </a>
+                    <a class="close-link">
+                        <i class="fa fa-times"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="ibox-content">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>操作系统：</td>
+                            <td>WINNT</td>
+                        </tr>
+                        <tr>
+                            <td>运行方式：</td>
+                            <td>apache2handler</td>
+                        </tr>
+                        <tr>
+                            <td>PHP版本：</td>
+                            <td>5.5.30</td>
+                        </tr>
+                        <tr>
+                            <td>MYSQL版本：</td>
+                            <td>mysqlnd 5.0.11-dev - 20120503 - $Id: 15d5c781cfcad91193dceae1d2cdd127674ddb3e $</td>
+                        </tr>
+                        <tr>
+                            <td>GD库版本：</td>
+                            <td>bundled (2.1.0 compatible)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+   </div>
+</div>
+<?php $this->load->view('admin/Common/footer.html');?>          
+
+
+

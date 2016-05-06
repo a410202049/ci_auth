@@ -1,0 +1,86 @@
+</head>
+<body class="fixed-navigation">
+    <div id="wrapper">
+        <nav class="navbar-default navbar-static-side" role="navigation">
+            <div class="sidebar-collapse">
+                <ul class="nav" id="side-menu">
+                    <li class="nav-header">
+                        <div class="dropdown profile-element"> <span>
+                        <!-- <?php echo base_url('public/uploads/users/user_1/ava.png')?> -->
+                            <img alt="image" class="img-circle" src="<?php if($userinfo['avatar']){ echo base_url('public/uploads/users/'.$userinfo['avatar']);}else{echo base_url('public/uploads/users/default_small.png');}?>" width="64" height="64"/>
+                             </span>
+                            <a data-toggle="dropdown" class="dropdown-toggle" href="index.html#">
+                                <span class="clear"> <span class="block m-t-xs"> <strong class="font-bold"><?php echo $userinfo['username'];?></strong>
+                             </span>  <span class="text-muted text-xs block"><?php echo $userinfo['groupname'];?><b class="caret"></b></span> </span>
+                            </a>
+                            <ul class="dropdown-menu animated fadeInRight m-t-xs">
+                                <li><a href="<?php echo base_url('admin/Main/changeAvatar');?>">修改头像</a>
+                                </li>
+                                <li><a href="<?php echo base_url('admin/Main/changePassword');?>">修改密码</a>
+                                </li>
+                                <li class="divider"></li>
+                                <li><a href="<?php echo base_url('admin/index/logout');?>">安全退出</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="logo-element">
+                            H+
+                        </div>
+                    </li>
+
+                    <?php foreach ($dataMenu as $item): ?>
+                        <li <?php if($item['id'] == $cid){ echo "class='active'";}?>>
+                            <a href="<?php if($item['name']){ echo base_url('admin/'.$item['name']);}else{ echo 'javascript:void(0);';}?>"><i class="<?php echo $item['icon']; ?>"></i> <span class="nav-label"><?php echo $item['title']; ?></span> <span class="fa arrow"></span></a>
+                            <?php if(!empty($item['sub'])){?>
+                                <ul class="nav nav-second-level collapse">
+                                    <?php foreach($item['sub'] as $sub):?>
+                                        <li <?php if($sub['id'] == $tid ){ echo "class='active'";}?>>
+                                            <?php if(!empty($sub['icon'])){?><i class="<?php echo $sub['icon'];?>"></i><?php }?>
+                                            <a  href="<?php echo base_url('admin/'.$sub['name']);?>"><?php echo $sub['title'];?></a>
+                                        </li>
+                                    <?php endforeach;?>                      
+                                </ul>
+                            <?php }?>
+                        </li>
+                     <?php endforeach; ?>
+                </ul>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="gray-bg">
+            <div class="row border-bottom">
+                <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+                    <div class="navbar-header">
+                        <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="javascript:void(0);"><i class="fa fa-bars"></i> </a>
+                    </div>
+                    <ul class="nav navbar-top-links navbar-right">
+                        <li>
+                            <span class="m-r-sm text-muted welcome-message"><a href="#" title="返回首页"><i class="fa fa-home"></i></a>欢迎使用H+后台主题</span>
+                        </li>
+                        <li>
+                            <a href="<?php echo base_url('admin/index/logout');?>">
+                                <i class="fa fa-sign-out"></i> 退出
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="row  border-bottom white-bg dashboard-header">
+                <div class="col-lg-10">
+                    <ol class="breadcrumb">
+                        <li>
+                            <a href="Admin/Index">主页</a>
+                        </li>
+                        <li>
+                            <strong>系统首页</strong>
+                        </li>
+                    </ol>
+                </div>
+                <div class="col-lg-2">
+
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="wrapper wrapper-content">

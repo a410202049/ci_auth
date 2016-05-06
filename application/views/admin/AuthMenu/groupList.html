@@ -1,0 +1,83 @@
+<?php $this->load->view('admin/Common/nav.html');?>
+<div class="row">
+       <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>用户列表</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <a href="<?php echo base_url('admin/AuthMenu/addGroup');?>" class="btn btn-primary"><i class="fa fa-plus"></i>&nbsp;&nbsp;添加角色组</a>
+                    <div class="table-box">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>用户组名称</th>
+                                    <th>创建时间</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                               <?php foreach ($groups as $group): ?>
+                                        <tr>
+                                            <td><?php echo $group['id'];?></td>
+                                            <td><?php echo $group['title'];?></td>
+                                            <td><?php echo date('Y-m-d H:i:s',$group['create_time']);?></td>
+                                            <?php if($group['id'] == '1'){?>
+                                                <td><a class="option disable-option" href="javascript:void(0)">授权/编辑</a>|<a class="option disable-option" data-id="<?php echo $group['id'];?>">删除</a></td>
+                                                <?php }else{ ?>
+                                                <td><a class="option" href="<?php echo base_url('admin/AuthMenu/editGroup').'/'.$group['id'];?>">授权/编辑</a>|<a class="option del-group" data-id="<?php echo $group['id'];?>">删除</a></td>
+                                            <?php }?>
+                                        </tr>
+                                <?php endforeach; ?>                         
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script type="text/javascript">
+        window.onload = function(){
+            $('.del-group').click(function(){
+                var id = $(this).data('id');
+                del_group(id);
+            })
+
+            function del_group(id){
+                layer.confirm('您确定要删除此用户组？', {icon: 3, title:'确认删除用户组'}, function(index){
+                    $.ajax({
+                        type:"POST",
+                        url:"/admin/AuthMenu/delGroup",
+                        data:{id:id},
+                        dataType:"json",
+                        success:function(data){
+                            if(data.status=='success'){
+                                layer.msg(data.message,{icon: 1});
+                                window.location.reload(true);
+                                layer.close(index);
+                            }else{
+                                layer.msg(data.message,{icon: 2});
+                            }
+                        }
+                    })
+                
+                }) 
+            }
+        } 
+    </script>
+<?php $this->load->view('admin/Common/footer.html');?>          
+
+
+

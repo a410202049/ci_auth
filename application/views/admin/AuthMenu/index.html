@@ -1,0 +1,152 @@
+<?php $this->load->view('admin/Common/nav.html');?>
+<div class="row">
+       <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>字段列表</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <form id="addMenuForm" role="form" class="form-inline">
+                            <div class="form-group padding-right">
+                                <label>父级菜单：</label>
+                                    <select class="form-control" name="pid">
+                                        <option value="0">--顶级菜单--</option>
+                                        <?php echo $menus;?>
+                                    </select>
+                            </div>
+                            <div class="form-group padding-right">
+                                <label>是否显示：</label>
+                                    <select class="form-control" name="isshow">
+                                        <option value="1">显示</option>
+                                        <option value="0">隐藏</option>
+                                    </select>
+                            </div>
+                            <div class="form-group padding-right">
+                                <label>菜单名称：</label>
+                                <input type="text" name="title" placeholder="请输入菜单名称" class="form-control">
+                            </div>
+                            <div class="form-group padding-right">
+                                <label>控制器/方法：</label>
+                                <input type="text" name="name" placeholder="请输出控制器/方法" class="form-control">
+                            </div>
+                            <div class="form-group padding-right">
+                                <label>菜单图标：</label>
+                                <input type="text" name="icon" placeholder="菜单图标" class="form-control">
+                            </div>
+                            <span style="margin-bottom: 0px;" href="javascript:void(0);" class="btn btn-primary add-field" id="addMenu"><i class="fa fa-plus"></i>&nbsp;&nbsp;添加菜单</span>
+                    </form>
+                    <form id="rule-order" name="rule-order">
+                    <span class="btn btn-primary add-field" id="rule-order-btn">排序</span>
+                        <div style="margin-top: 10px;" class="table-box">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>排序</th>
+                                        <th>ID</th>
+                                        <th>菜单名称</th>
+                                        <th>控制器/方法</th>
+                                        <th>是否显示</th>
+                                        <th>创建时间</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php echo $tr;?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        window.onload = function(){
+        　　$(".del-menu").click(function(){
+        　　　　var id = $(this).data('val');
+                del_menu(id);
+        　　});
+
+            function del_menu(id){
+                 layer.confirm('您确定要添加此菜单？', {icon: 3, title:'确认添加菜单'}, function(index){
+                    $.ajax({
+                        type:"POST",
+                        url:"/admin/AuthMenu/delMenu",
+                        data:{id:id},
+                        dataType:"json",
+                        success:function(data){
+                            if(data.status=='success'){
+                                layer.msg(data.message,{icon: 1});
+                                window.location.reload(true);
+                                layer.close(index);
+                            }else{
+                                layer.msg(data.message,{icon: 2});
+                            }
+                        }
+                    })
+                 })
+            }
+
+            $('#rule-order-btn').click(function(){
+                $.ajax({
+                 type: "POST",
+                 url: "/admin/AuthMenu/order",
+                 data: $('#rule-order').serialize(),
+                 dataType: "json",
+                 success: function(data){
+                    if(data.status=='success'){
+                        layer.msg(data.message,{icon: 1});
+                        window.location.reload();
+                    }else{
+                        layer.msg(data.message,{icon: 2});
+                    }
+                 }})
+            })
+
+            $('#addMenu').click(function(){
+                var data = $('#addMenuForm');
+                add_menu(data);
+            })
+
+            function add_menu(data){
+                var title = data.find('input[name=title]').val();
+                var name = data.find('input[name=name]').val();
+                if(!title){
+                    layer.msg('菜单名称不能为空',{icon: 2});
+                }else{
+
+                    layer.confirm('您确定要添加此菜单？', {icon: 3, title:'确认添加菜单'}, function(index){
+                        $.ajax({
+                            type:"POST",
+                            url:"/admin/AuthMenu/addMenu",
+                            data:data.serialize(),
+                            dataType:"json",
+                            success:function(data){
+                                // console.log(data);
+                                if(data.status=='success'){
+                                    layer.msg(data.message,{icon: 1});
+                                    window.location.reload(true);
+                                    layer.close(index);
+                                }else{
+                                    layer.msg(data.message,{icon: 2});
+                                }
+                            }
+                        })
+                    })
+                }
+            }
+
+        } 
+    </script>
+<?php $this->load->view('admin/Common/footer.html');?>          
+
+
+

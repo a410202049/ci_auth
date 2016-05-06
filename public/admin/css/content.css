@@ -1,0 +1,45 @@
+
+.up-padding {
+    padding-top: 50px;
+}
+.uploadify-button {
+    background: #1ab394 none repeat scroll 0 0;
+    border: medium none;
+    border-radius: 0;
+}
+.uploadify:hover .uploadify-button {
+    background: #1ab394 none repeat scroll 0 0;
+}
+.a-upload {
+    background: #fafafa none repeat scroll 0 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    color: #888;
+    cursor: pointer;
+    display: inline-block;
+    height: 30px;
+    line-height: 20px;
+    overflow: hidden;
+    padding: 4px 10px;
+    position: relative;
+}
+.a-upload input {
+    cursor: pointer;
+    font-size: 100px;
+    opacity: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+.a-upload:hover {
+    background: #eee none repeat scroll 0 0;
+    border-color: #ccc;
+    color: #444;
+    text-decoration: none;
+}
+.imageslist span {
+    display: none;
+}
+.imageslist, .uploadify:hover .imageslist {
+    background: rgba(0, 0, 0, 0) url("../img/add-imgs.png") repeat scroll 0 0;
+}

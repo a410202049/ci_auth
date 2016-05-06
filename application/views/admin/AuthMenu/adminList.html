@@ -1,0 +1,205 @@
+<?php $this->load->view('admin/Common/nav.html');?>
+<div class="row">
+       <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>用户列表</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <a href="javascript:void(0);" class="btn btn-primary add-user"><i class="fa fa-plus"></i>&nbsp;&nbsp;添加用户</a>
+                    <div class="table-box">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>用户名</th>
+                                    <th>用户组</th>
+                                    <th>最近登录IP</th>
+                                    <th>状态</th>
+                                    <th>最近登录时间</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                             <?php foreach ($admins as $item): ?>
+                                <tr>
+                                        <td><?php echo $item['id']; ?></td>
+                                        <td><?php echo $item['username']; ?></td>
+                                        <td><?php echo $item['groupname']; ?></td>
+                                        <td><?php echo $item['last_login_ip']; ?></td>
+                                        <td><?php echo $item['status']; ?></td>
+                                        <td><?php echo $item['last_login_time']; ?></td>
+                                        <?php if($item['id'] == 1){?>
+                                            <td><a class="option disable-option"><?php echo $item['disable']; ?></a>|<a class="option disable-option">删除</a></td>
+                                        <?php }else{?>
+                                            <td><a data-id="<?php echo $item['id']; ?>" class="option disable-user"><?php echo $item['disable']; ?></a>|<a data-id="<?php echo $item['id']; ?>" class="option del-user">删除</a></td>
+                                        <?php }?>
+                                </tr>
+                            <?php endforeach; ?>                          
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 添加用户模态框 -->
+    <div class="modal fade" id="add_user" tabindex="-1" role="dialog" aria-hidden="true">
+       <div class="modal-dialog">
+          <div class="modal-content">
+             <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">添加用户</h4>
+             </div>
+             <div class="modal-body">
+                <form class="form-horizontal" id="form-add-user" autocomplete="off">
+
+                    <div class="form-group">
+                        <label class="col-lg-3 control-label">用户名：</label>
+                        <div class="col-lg-8">
+                            <input type="text" class="form-control" required="true" name="username">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-3 control-label">用户密码：</label>
+                        <div class="col-lg-8">
+                            <input type="password" class="form-control" name="password" id="password">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-3 control-label">确认密码：</label>
+                        <div class="col-lg-8">
+                            <input type="password" class="form-control" name="cpassword"> 
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-3 control-label">选择分组：</label>
+                        <div class="col-sm-8">
+                            <select class="form-control m-b" name="groupid" id="groupOption">
+                                <?php foreach ($groups as $item): ?>
+                                    <option value="<?php echo $item['id'];?>"><?php echo $item['title'];?></option>
+                                <?php endforeach; ?> 
+
+                            </select>                            
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-5 col-sm-offset-3">
+                            <button type="submit" class="btn btn-primary">保存内容</button>
+                            <button type="button" class="btn btn-default col-sm-offset-1" data-dismiss="modal">取消</button>
+                        </div>
+                    </div>
+                </form>
+             </div>
+          </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        window.onload = function(){
+            $('.disable-user').click(function(){
+                var id = $(this).data('id');
+                disable_user(id);
+            })
+
+            $('.del-user').click(function(){
+                var id = $(this).data('id');
+                del_user(id);
+            })
+
+            $('.add-user').click(function(){
+                $('#add_user').modal('show');
+            })
+
+           $("#form-add-user").validate({
+                rules: {
+                  username:"required",
+                  password:"required",
+                  cpassword: {
+                    required:true,
+                    equalTo: "#password"
+                  },
+                },
+                messages: {
+                  username:"请输入用户名",
+                  password: "请输入密码",
+                  cpassword:  {
+                    required:"请输入重复密码",
+                    equalTo:"两次密码不一致"
+                  },
+                },
+                submitHandler:function(form){
+                    $.ajax({
+                     type: "POST",
+                     url: "/admin/AuthMenu/addUser",
+                     data: $(form).serialize(),
+                     dataType: "json",
+                     success: function(data){
+                        if(data.status=='success'){
+                            $('#add_user').modal('hide');
+                            layer.msg(data.message,{icon: 1});
+                            window.location.reload(true);
+                        }else{
+                            layer.msg(data.message,{icon: 2});
+                        }
+                     }})
+                }
+            })
+
+            function disable_user(id){
+                 layer.confirm('您确定要禁用此用户？', {icon: 3, title:'确认禁用用户'}, function(index){
+                    $.ajax({
+                        type:"POST",
+                        url:"/admin/AuthMenu/disableUser",
+                        data:{id:id},
+                        dataType:"json",
+                        success:function(data){
+                            if(data.status=='success'){
+                                layer.msg(data.message,{icon: 1});
+                                window.location.reload(true);
+                                layer.close(index);
+                            }else{
+                                layer.msg(data.message,{icon: 2});
+                            }
+                        }
+                    })
+                 })
+            }
+
+            function del_user(id){
+                layer.confirm('您确定要删除此用户？', {icon: 3, title:'确认删除用户'}, function(index){
+                    $.ajax({
+                        type:"POST",
+                        url:"/admin/AuthMenu/delUser",
+                        data:{id:id},
+                        dataType:"json",
+                        success:function(data){
+                            if(data.status=='success'){
+                                layer.msg(data.message,{icon: 1});
+                                window.location.reload(true);
+                                layer.close(index);
+                            }else{
+                                layer.msg(data.message,{icon: 2});
+                            }
+                        }
+                    })
+                }) 
+            }
+
+        } 
+    </script>
+<?php $this->load->view('admin/Common/footer.html');?>          
+
+
+
