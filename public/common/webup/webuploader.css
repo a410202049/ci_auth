@@ -26,10 +26,3 @@
 	pointer-events:none;
 }
 
-.file-item.thumbnail{
-	width: 120px;
-	height: 120px;
-	float: left;
-	margin-right: 10px;
-}
-
