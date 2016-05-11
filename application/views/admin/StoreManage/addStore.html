@@ -1,0 +1,329 @@
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=3ILYr69BvR9fs4FveYgPTLnzhH3CcsSy"></script>
+    <style type="text/css">
+        #allmap {width: 100%;height: 100%;overflow: hidden;margin:0;font-family:"微软雅黑";}
+        .map-addr{
+            height: 500px;
+        }
+        .store{
+            margin-right: 15px;
+        }
+    </style>
+<?php $this->load->view('admin/Common/nav.html');?>
+    <div class="row">
+        <div class="col-lg-12">
+
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>添加用户组</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                
+                    <form class="form-inline" role="form" id="addMenuForm">
+                        <a class="btn btn-primary store" href="<?php echo site_url('admin/StoreManage/storeList') ?>"><i class="fa fa-list-ul"></i>&nbsp;&nbsp;门店列表</a>
+                                <div class="form-group padding-right">
+                                    <label>大区：</label>
+                                        <select name="isshow" class="form-control" id="area-large">
+                                        </select>
+                                </div>
+                                <div class="form-group padding-right">
+                                    <label>省：</label>
+                                        <select name="isshow" class="form-control" id="area-province">
+                                        </select>
+                                </div>
+                                <div class="form-group padding-right">
+                                    <label>市：</label>
+                                        <select name="isshow" class="form-control" id="area-city">
+                                        </select>
+                                </div>
+                                <div class="form-group padding-right area-select" style="display: none;">
+                                    <label>管理区域：</label>
+                                        <select name="isshow" class="form-control" id="custom-area">
+                                        </select>
+                                </div>
+                        </form>
+                        <div class="hr-line-dashed"></div>
+                    <form method="post" class="form-horizontal" id="form-group-add">
+                        
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">门店名称：</label>
+                            <div class="col-sm-2">
+                                <input type="text" class="form-control" name="name">
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">门店详细地址：</label>
+                            <div class="col-sm-2">
+                                <input type="text" class="form-control" name="address" id="suggestId">
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">门店联系方式：</label>
+                            <div class="col-sm-2">
+                                <input type="text" class="form-control" name="tel">
+                            </div>
+                        </div>
+
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">开业时间：</label>
+                            <div class="col-sm-2">
+                                <input type="text" class="form-control laydate-icon" name="name" id="date" >
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">百度地图：</label>
+                            <div class="col-sm-8 map-addr">
+                                <div id="allmap"></div>
+                                <div id="searchResultPanel" style="border:1px solid #C0C0C0;width:150px;height:auto; display:none;"></div>
+                                <input type="hidden" class="form-control " name="longitude">
+                                <input type="hidden" class="form-control " name="latitude">
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">门店图片：</label>
+                            <div class="col-sm-8">
+                                <div id="uploader-demo">
+                                    <!--用来存放item-->
+                                    <div id="fileList" class="uploader-list"></div>
+                                    <div id="filePicker">选择图片</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <button type="submit" class="btn btn-primary add-group">创建用户组</button>
+                                <a class="btn btn-white" href="/admin/AuthMenu/groupList">取消</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        window.onload = function(){
+            addressInit('area-large', 'area-province', 'area-city','6','530000','530100');//默认为昆明
+            laydate.skin('molv');
+            laydate({
+               elem: '#date'
+            })
+            cityChange();
+            getCustomArea($('#area-city').val(),'city');
+            $('#area-large').change(function(){
+                cityChange();
+                getCustomArea($(this).val(),'large');
+            })
+            
+            $('#area-province').change(function(){
+                cityChange();
+                getCustomArea($(this).val(),'province');
+            })
+
+            $('#area-city').change(function(){
+                cityChange();
+                getCustomArea($(this).val(),'city');
+            })
+
+        var uploader = WebUploader.create({
+
+            // 选完文件后，是否自动上传。
+            auto: true,
+
+            // swf文件路径
+            swf: "<?php echo base_url('public/common/webup/')?>" + '/Uploader.swf',
+
+            // 文件接收服务端。
+            server: 'http://webuploader.duapp.com/server/fileupload.php',
+
+            // 选择文件的按钮。可选。
+            // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+            pick: '#filePicker',
+
+            // 只允许选择图片文件。
+            accept: {
+                title: 'Images',
+                extensions: 'gif,jpg,jpeg,bmp,png',
+                mimeTypes: 'image/*'
+            }
+        });
+
+        // 当有文件添加进来的时候
+        uploader.on( 'fileQueued', function( file ) {
+            var $li = $(
+                    '<div id="' + file.id + '" class="file-item thumbnail">' +
+                        '<img>' +
+                        '<div class="info">' + file.name + '</div>' +
+                    '</div>'
+                    ),
+                $img = $li.find('img');
+
+
+            // $list为容器jQuery实例
+
+            $('#fileList').append( $li );
+
+            // 创建缩略图
+            // 如果为非图片文件，可以不用调用此方法。
+            // thumbnailWidth x thumbnailHeight 为 100 x 100
+            uploader.makeThumb( file, function( error, src ) {
+                if ( error ) {
+                    $img.replaceWith('<span>不能预览</span>');
+                    return;
+                }
+
+                $img.attr( 'src', src );
+            }, 100, 100 );
+        });
+
+        // 文件上传过程中创建进度条实时显示。
+        uploader.on( 'uploadProgress', function( file, percentage ) {
+            var $li = $( '#'+file.id ),
+                $percent = $li.find('.progress span');
+
+            // 避免重复创建
+            if ( !$percent.length ) {
+                $percent = $('<p class="progress"><span></span></p>')
+                        .appendTo( $li )
+                        .find('span');
+            }
+
+            $percent.css( 'width', percentage * 100 + '%' );
+        });
+
+        // 文件上传成功，给item添加成功class, 用样式标记上传成功。
+        uploader.on( 'uploadSuccess', function( file ) {
+            $( '#'+file.id ).addClass('upload-state-done');
+        });
+
+        // 文件上传失败，显示上传出错。
+        uploader.on( 'uploadError', function( file ) {
+            var $li = $( '#'+file.id ),
+                $error = $li.find('div.error');
+
+            // 避免重复创建
+            if ( !$error.length ) {
+                $error = $('<div class="error"></div>').appendTo( $li );
+            }
+            $error.text('上传失败');
+        });
+
+        // 完成上传完了，成功或者失败，先删除进度条。
+        uploader.on( 'uploadComplete', function( file ) {
+            $( '#'+file.id ).find('.progress').remove();
+        });
+
+
+
+        }
+
+        function getCustomArea(id,type){
+            $.ajax({
+                 type: "POST",
+                 url: "<?php echo site_url('admin/StoreManage/getCustomArea') ?>",
+                 data: {id:id,type:type},
+                 dataType: "json",
+                 success: function(data){
+                    if(data.status=='success'){
+                        if(data.data.length== 0){
+                            $('.area-select').css('display','none');
+                        }else{
+                            $('.area-select').css('display','inline-block');
+                        }
+                        area = $('#custom-area');
+                        str = "";
+                        for(var i=0; i<data.data.length; i++){
+                            str+= '<option value="'+data.data[i]['id']+'">'+data.data[i]['name']+'</option>';
+                        }
+                        area.html(str);
+                    }
+             }})
+        }
+
+
+        function cityChange(){
+            city = document.getElementById('area-city');
+            var s_index = city.selectedIndex;
+            var cityName = city.options[s_index].text;
+            cityName = typeof(cityName) != "undefined" ? cityName : '昆明市';
+            map(cityName);
+        }
+
+        function map(cityName){
+            // 百度地图API功能
+            function G(id) {
+                return document.getElementById(id);
+            }
+
+            var map = new BMap.Map("allmap");
+            map.centerAndZoom(cityName,12);                   // 初始化地图,设置城市和地图级别。
+            map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
+            var ac = new BMap.Autocomplete(    //建立一个自动完成的对象
+                {"input" : "suggestId"
+                ,"location" : map
+            });
+
+            ac.addEventListener("onhighlight", function(e) {  //鼠标放在下拉列表上的事件
+            var str = "";
+                var _value = e.fromitem.value;
+                var value = "";
+                if (e.fromitem.index > -1) {
+                    value = _value.province +  _value.city +  _value.district +  _value.street +  _value.business;
+                }    
+                str = "FromItem<br />index = " + e.fromitem.index + "<br />value = " + value;
+                
+                value = "";
+                if (e.toitem.index > -1) {
+                    _value = e.toitem.value;
+                    value = _value.province +  _value.city +  _value.district +  _value.street +  _value.business;
+                }    
+                str += "<br />ToItem<br />index = " + e.toitem.index + "<br />value = " + value;
+                G("searchResultPanel").innerHTML = str;
+            });
+
+            var myValue;
+            ac.addEventListener("onconfirm", function(e) {    //鼠标点击下拉列表后的事件
+            console.log(e);
+            var _value = e.item.value;
+                myValue = _value.province +  _value.city +  _value.district +  _value.street +  _value.business;
+                G("searchResultPanel").innerHTML ="onconfirm<br />index = " + e.item.index + "<br />myValue = " + myValue;
+                
+                setPlace();
+            });
+
+            function setPlace(){
+                map.clearOverlays();    //清除地图上所有覆盖物
+                function myFun(){
+                    var pp = local.getResults().getPoi(0).point;    //获取第一个智能搜索的结果
+                    map.centerAndZoom(pp, 18);
+                    map.addOverlay(new BMap.Marker(pp));    //添加标注
+                    console.log(pp)
+                    $('input[name=longitude]').val(pp.lng);
+                    $('input[name=latitude]').val(pp.lat);
+
+                }
+                var local = new BMap.LocalSearch(map, { //智能搜索
+                  onSearchComplete: myFun
+                });
+                local.search(myValue);
+            }
+        }
+    </script>
+<?php $this->load->view('admin/Common/footer.html');?>          
+
+
+

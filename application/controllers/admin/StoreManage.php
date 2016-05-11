@@ -5,12 +5,7 @@ class StoreManage extends Auth_Controller {
 		parent::__construct();
 	}
 
-	/**
-	 * 门店列表
-	 */
-	public function storeList(){
-		$this->load->view('admin/StoreManage/storeList.html');
-	}
+
 
 	/**
 	 * 自定义区域管理
@@ -64,7 +59,7 @@ class StoreManage extends Auth_Controller {
             unset($arr['large']); 
             $status = $this->db->insert('custom_area', $arr);
             if($status){
-                $this->response_data('success','大区添加成功');
+                $this->response_data('success','区域添加成功');
             }
         }
 	}
@@ -77,15 +72,15 @@ class StoreManage extends Auth_Controller {
             $name = $this->input->post('name');
             $mark = $this->input->post('mark');
             if(!$name){
-                $this->response_data('error','大区名不能为空');
+                $this->response_data('error','区域名不能为空');
             }
             $data = $this->db->get_where('custom_area', array('name'=>$name,'id !='=>$this->input->post('id')))->row_array();
             if($data){
-                $this->response_data('error','大区已经存在');
+                $this->response_data('error','区域已经存在');
             }
             $arr = $this->input->post();
             $this->db->update('custom_area', array('name'=>$name,'mark'=>$mark,'largeid'=>$arr['large'],'provinceid'=>$arr['province'],'cityid'=>$arr['city']), array('id'=>$this->input->post('id')));
-            $this->response_data('success','大区编辑成功');
+            $this->response_data('success','区域编辑成功');
         }
 	}
 
@@ -132,5 +127,47 @@ class StoreManage extends Auth_Controller {
 		}
 	}
 
+	/**
+	 * 添加门店
+	 */
+	public function addStore(){
+		if($this->input->is_ajax_request()){
+
+		}else{
+			$this->load->view('admin/StoreManage/addStore.html');
+		}
+	}
+
+	/**
+	 * 门店列表
+	 */
+	public function storeList(){
+		$this->load->view('admin/StoreManage/storeList.html');
+	}
+
+	/**
+	 * 根据相应ID获取自定义区域
+	*/
+
+	public function getCustomArea(){
+		if($this->input->is_ajax_request()){
+			$id = $this->input->post('id');
+			$type = $this->input->post('type');
+			$field = "";
+			switch ($type) {
+				case 'large':
+					$field = 'largeid';
+					break;
+				case 'province':
+					$field = 'provinceid';
+					break;
+				case 'city':
+					$field = 'cityid';
+					break;
+			}
+			$data = $this->db->get_where('custom_area', array($field=>$id))->result_array();
+			$this->response_data('success','获取成功',$data);
+		}
+	}
 
 }
