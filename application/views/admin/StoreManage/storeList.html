@@ -35,7 +35,7 @@
                                     <td><?php echo $item['provincename']; ?></td>
                                     <td><?php echo $item['cityname']; ?></td>
                                     <td><?php echo $item['name']; ?></td>
-                                    <td><a class="option edit_area" data-id="<?php echo $item['id']; ?>">编辑</a>|<a class="option del_area" data-id="<?php echo $item['id']; ?>">删除</a></td>
+                                    <td><a class="option edit_area" href="<?php echo site_url('admin/StoreManage/editStore').'/'.$item['id']; ?>">编辑</a>|<a class="option del_area" data-id="<?php echo $item['id']; ?>">删除</a></td>
                                 </tr>
                             <?php endforeach; ?>                          
                             </tbody>

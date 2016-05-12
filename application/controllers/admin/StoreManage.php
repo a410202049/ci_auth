@@ -152,9 +152,31 @@ class StoreManage extends Auth_Controller {
 			$status = $this->db->insert('esc_store', $arr);
 			$this->response_data('success','门店添加成功');
 		}else{
+
 			$this->load->view('admin/StoreManage/addStore.html');
 		}
 	}
+
+	/**
+	 * 编辑门店
+	 */
+	public function editStore(){
+		$arr = $this->input->post();			
+		if($this->input->is_ajax_request()){
+		
+		}else{
+			$id = $this->uri->segment(4);
+			$store = $this->db->get_where('store', array('id'=>$id))->row_array();
+			$store['opentime'] = date('Y-m-d',$store['opentime']);
+			$store['imagesList'] = unserialize($store['imagesList']);
+			$areas = $this->db->get_where('custom_area', array('id'=>$store['custom_area_id']))->row_array();
+
+			$arr['areas'] = $areas;
+			$arr['store'] = $store;
+			$this->load->view('admin/StoreManage/editStore.html',$arr);
+		}
+	}
+
 
 	/**
 	 * 门店列表
@@ -166,10 +188,10 @@ class StoreManage extends Auth_Controller {
 		$page_config['seg']=4;//参数取 index.php之后的段数，默认为3，即index.php/control/function/18 这种形式
 		$page_config['nowindex']=$this->uri->segment($page_config['seg']) ? $this->uri->segment($page_config['seg']):1;//当前页
 		$this->load->library('mypage_class');
-		$page_config['total']=$this->db->count_all_results('esc_store');
+		$page_config['total']=$this->db->count_all_results('store');
 		$this->mypage_class->initialize($page_config);
 		$this->db->limit($page_config['perpage'],$page_config['perpage'] * ($page_config['nowindex'] - 1));
-		$data = $this->db->order_by('id','desc')->get('esc_store')->result_array();
+		$data = $this->db->order_by('id','desc')->get('store')->result_array();
 		foreach ($data as $key => $value) {
 			$areas = $this->db->get_where('custom_area', array('id'=>$value['custom_area_id']))->row_array();
 			$lagrename = $this->db->get_where('large_area', array('id'=>$areas['largeid']))->row_array()['name'];
