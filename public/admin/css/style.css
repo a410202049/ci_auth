@@ -6426,3 +6426,51 @@ body.skin-3 {
 .padding-right{
   margin-right: 15px;
 }
+
+.imgListUp{
+  margin: 0px;
+  padding: 0px;
+}
+
+.imgListUp li{
+    float: left;
+    list-style: none;
+    margin-right: 10px;
+    padding:5px;
+    border: 1px solid #ccc;
+    position: relative;
+    width: 160px;
+    height: 160px
+}
+
+.imgListUp img{
+    width: 150px;
+    height: 150px
+}
+
+.file_bar{
+  position: absolute;
+  background: #000000;
+  opacity: 0.8;
+  width: 150px;
+  cursor: pointer;
+  display: none;
+}
+.file_name{
+  margin:5px 5px;
+  color: #fff;
+}
+
+.imgListUp li:hover .file_bar{
+  display: block;
+}
+
+.file_del{
+  width: 13px;
+  height: 13px;
+  background: url('../img/delete_white.png');
+  position: absolute;
+  top: 8px;
+  right: 10px;
+
+}
