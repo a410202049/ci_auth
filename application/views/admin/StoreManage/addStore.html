@@ -32,32 +32,32 @@
                 </div>
                 <div class="ibox-content">
                 
-                    <form class="form-inline" role="form" id="addMenuForm">
+
+                    <form method="post"  id="form-store-add">
+                        <div class="form-inline">
                         <a class="btn btn-primary store" href="<?php echo site_url('admin/StoreManage/storeList') ?>"><i class="fa fa-list-ul"></i>&nbsp;&nbsp;门店列表</a>
                                 <div class="form-group padding-right">
                                     <label>大区：</label>
-                                        <select name="isshow" class="form-control" id="area-large">
+                                        <select  class="form-control" id="area-large">
                                         </select>
                                 </div>
                                 <div class="form-group padding-right">
                                     <label>省：</label>
-                                        <select name="isshow" class="form-control" id="area-province">
+                                        <select  class="form-control" id="area-province">
                                         </select>
                                 </div>
                                 <div class="form-group padding-right">
                                     <label>市：</label>
-                                        <select name="isshow" class="form-control" id="area-city">
+                                        <select  class="form-control" id="area-city">
                                         </select>
                                 </div>
                                 <div class="form-group padding-right area-select" style="display: none;">
                                     <label>管理区域：</label>
-                                        <select name="isshow" class="form-control" id="custom-area">
-                                        </select>
+                                        <select class="form-control" id="custom-area" name="custom_area_id"></select>
                                 </div>
-                        </form>
+                        </div>
+                        <div class="form-horizontal">
                         <div class="hr-line-dashed"></div>
-                    <form method="post" class="form-horizontal" id="form-group-add">
-                        
                         <div class="form-group">
                             <label class="col-sm-2 control-label">门店名称：</label>
                             <div class="col-sm-2">
@@ -83,7 +83,7 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">开业时间：</label>
                             <div class="col-sm-2">
-                                <input type="text" class="form-control laydate-icon" name="name" id="date" >
+                                <input type="text" class="form-control laydate-icon" name="opentime" id="date" >
                             </div>
                         </div>
                         <div class="hr-line-dashed"></div>
@@ -100,25 +100,17 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">门店图片：</label>
                             <div class="col-sm-8">
-<!--                                 <ul class="imgListUp">
-                                    <li>
-                                        <div class="file_bar">      
-                                                <p class="file_name">ava.png</p>
-                                                <span title="删除" data-index="0" class="file_del"></span>        
-                                        </div>
-                                        <img src="http://assets.jq22.com/plugin/pc-bdc45ba6-c665-11e4-9784-00163e001348.png">
-                                    </li>
-                                </ul> -->
                                 <div id="selector" class="btn btn-primary uploadFileBtn">选择图片</div>
                             </div>
                         </div>
                         <div class="hr-line-dashed"></div>
-
+        
                         <div class="form-group">
                             <div class="col-sm-4 col-sm-offset-2">
-                                <button type="submit" class="btn btn-primary add-group">创建用户组</button>
-                                <a class="btn btn-white" href="/admin/AuthMenu/groupList">取消</a>
+                                <button type="submit" class="btn btn-primary">添加门店</button>
+                                <a class="btn btn-white" href="/admin/StoreManage/storeList">取消</a>
                             </div>
+                        </div>
                         </div>
                     </form>
                 </div>
@@ -154,13 +146,42 @@
                 getCustomArea($(this).val(),'city');
             })
 
-
-
-
-
+            $("#form-store-add").validate({
+                rules: {
+                  name:"required",
+                  address:"required",
+                  tel:"required",
+                  opentime:"required",
+                  address:"required",
+                },
+                messages: {
+                  name: "请输入门店名称",
+                  address: "请输入门店联系地址",
+                  tel: "请输入门店联系方式",
+                  opentime: "请输入门店开业时间",
+                  name: "请输入门店名称",
+                },
+                submitHandler:function(form){
+                    $.ajax({
+                     type: "POST",
+                     url: "/admin/StoreManage/addStore",
+                     data: $(form).serialize(),
+                     dataType: "json",
+                     success: function(data){
+                        if(data.status=='success'){
+                            layer.msg(data.message,{icon: 1});
+                            window.location.href = '/admin/StoreManage/storeList';
+                        }else{
+                            layer.msg(data.message,{icon: 2});
+                        }
+                     }})
+                }
+            })
 
 
         }
+
+
 
         function getCustomArea(id,type){
             $.ajax({
@@ -228,7 +249,6 @@
 
             var myValue;
             ac.addEventListener("onconfirm", function(e) {    //鼠标点击下拉列表后的事件
-            console.log(e);
             var _value = e.item.value;
                 myValue = _value.province +  _value.city +  _value.district +  _value.street +  _value.business;
                 G("searchResultPanel").innerHTML ="onconfirm<br />index = " + e.item.index + "<br />myValue = " + myValue;
@@ -242,7 +262,6 @@
                     var pp = local.getResults().getPoi(0).point;    //获取第一个智能搜索的结果
                     map.centerAndZoom(pp, 18);
                     map.addOverlay(new BMap.Marker(pp));    //添加标注
-                    console.log(pp)
                     $('input[name=longitude]').val(pp.lng);
                     $('input[name=latitude]').val(pp.lat);
 

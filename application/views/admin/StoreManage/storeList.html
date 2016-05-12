@@ -24,25 +24,24 @@
                                     <th>省份</th>
                                     <th>市</th>
                                     <th>区域名称</th>
-                                    <th>备注</th>
                                     <th>操作</th>
                                 </tr>
                             </thead>
-<!--                             <tbody>
-                             <?php foreach ($areas as $item): ?>
+                            <tbody>
+                             <?php foreach ($data as $item): ?>
                                 <tr>
                                     <td><?php echo $item['id']; ?></td>
-                                    <td><?php echo $item['large']; ?></td>
-                                    <td><?php echo $item['province']; ?></td>
-                                    <td><?php echo $item['city']; ?></td>
+                                    <td><?php echo $item['lagrename']; ?></td>
+                                    <td><?php echo $item['provincename']; ?></td>
+                                    <td><?php echo $item['cityname']; ?></td>
                                     <td><?php echo $item['name']; ?></td>
-                                    <td><?php echo $item['mark']; ?></td>
                                     <td><a class="option edit_area" data-id="<?php echo $item['id']; ?>">编辑</a>|<a class="option del_area" data-id="<?php echo $item['id']; ?>">删除</a></td>
                                 </tr>
                             <?php endforeach; ?>                          
-                            </tbody> -->
+                            </tbody>
                         </table>
                     </div>
+                <?php echo $this->mypage_class->show(1); ?>
                 </div>
             </div>
         </div>
