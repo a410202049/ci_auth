@@ -12,7 +12,18 @@ class StoreManage extends Auth_Controller {
 	 */
 	public function areaManage(){
         $largearea = $this->db->get('large_area')->result_array();
-        $areas = $this->db->get('custom_area')->result_array();
+
+		$page_config['perpage']=5;   //每页条数
+		$page_config['part']=2;//当前页前后链接数量
+		$page_config['url']='admin/StoreManage/areaManage';//url
+		$page_config['seg']=4;//参数取 index.php之后的段数，默认为3，即index.php/control/function/18 这种形式
+		$page_config['nowindex']=$this->uri->segment($page_config['seg']) ? $this->uri->segment($page_config['seg']):1;//当前页
+		$this->load->library('mypage_class');
+		$page_config['total']=$this->db->count_all_results('custom_area');
+		$this->mypage_class->initialize($page_config);
+		$this->db->limit($page_config['perpage'],$page_config['perpage'] * ($page_config['nowindex'] - 1));
+		$areas = $this->db->order_by('id','desc')->get('custom_area')->result_array();
+        
         foreach ($areas as $key => $value) {
 	        $large = $this->db->get_where('large_area', array('id'=>$value['largeid']))->row_array();
 	        $province = $this->db->get_where('provinces', array('provinceid'=>$value['provinceid']))->row_array();
@@ -90,6 +101,10 @@ class StoreManage extends Auth_Controller {
 	public function delAreaManage(){
 		if($this->input->is_ajax_request()){
 			$id = $this->input->post('id');
+			$data = $this->db->get_where('store', array('custom_area_id'=>$id))->row_array();
+			if($data){
+				$this->response_data('error','当前区域下有门店，不能删除');
+			}
 			$this->db->delete('custom_area', array('id'=>$id));
 			$this->response_data('success','删除区域成功');
 		}
@@ -142,14 +157,14 @@ class StoreManage extends Auth_Controller {
 			if(!isset($arr['custom_area_id'])){
 				$this->response_data('error','请选择区域，没有则自行创建');
 			}
-			$data = $this->db->get_where('esc_store', array('address'=>$arr['address']))->row_array();
+			$data = $this->db->get_where('store', array('address'=>$arr['address']))->row_array();
 			if($data){
 				$this->response_data('error','门店相同不能重复添加');
 			}
 			$arr['opentime'] = strtotime($arr['opentime']);
 			$arr['imagesList'] = serialize($arr['imagesList']);
 			$arr['createtime'] = time();
-			$status = $this->db->insert('esc_store', $arr);
+			$status = $this->db->insert('store', $arr);
 			$this->response_data('success','门店添加成功');
 		}else{
 
@@ -163,7 +178,27 @@ class StoreManage extends Auth_Controller {
 	public function editStore(){
 		$arr = $this->input->post();			
 		if($this->input->is_ajax_request()){
-		
+			if(!$arr['longitude']||!$arr['latitude']){
+				$this->response_data('error','请输入正确的联系地址，否则获取不到经纬度');
+			}
+			if(!isset($arr['imagesList'])){
+				$this->response_data('error','请上传门店图片，至少一张');
+			}
+			if(!isset($arr['custom_area_id'])){
+				$this->response_data('error','请选择区域，没有则自行创建');
+			}
+			$data = $this->db->get_where('store', array('address'=>$arr['address'],'id !='=>$arr['id']))->row_array();
+			if($data){
+				$this->response_data('error','门店相同不能重复添加');
+			}
+			$arr['opentime'] = strtotime($arr['opentime']);
+			$arr['imagesList'] = serialize($arr['imagesList']);
+			$arr['createtime'] = time();
+			$id = $arr['id'];
+			unset($arr['id']);
+			$this->db->update('store',$arr, array('id'=>$id));
+			$this->response_data('success','门店编辑成功');
+
 		}else{
 			$id = $this->uri->segment(4);
 			$store = $this->db->get_where('store', array('id'=>$id))->row_array();

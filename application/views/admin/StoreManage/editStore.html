@@ -1,0 +1,372 @@
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=3ILYr69BvR9fs4FveYgPTLnzhH3CcsSy"></script>
+    <style type="text/css">
+        #allmap {width: 100%;height: 100%;overflow: hidden;margin:0;font-family:"微软雅黑";}
+        .map-addr{
+            height: 500px;
+        }
+        .store{
+            margin-right: 15px;
+        }
+        .uploadFileBtn{
+/*            width: 150px;
+            height: 50px;
+            background: #999;
+            color: #fff;*/
+        }
+    </style>
+<?php $this->load->view('admin/Common/nav.html');?>
+    <div class="row">
+        <div class="col-lg-12">
+
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>添加用户组</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                
+
+                    <form method="post"  id="form-store-edit">
+                        <div class="form-inline">
+                        <a class="btn btn-primary store" href="<?php echo site_url('admin/StoreManage/storeList'); ?>"><i class="fa fa-list-ul"></i>&nbsp;&nbsp;门店列表</a>
+                                <div class="form-group padding-right">
+                                    <label>大区：</label>
+                                        <select  class="form-control" id="area-large">
+                                        </select>
+                                </div>
+                                <div class="form-group padding-right">
+                                    <label>省：</label>
+                                        <select  class="form-control" id="area-province">
+                                        </select>
+                                </div>
+                                <div class="form-group padding-right">
+                                    <label>市：</label>
+                                        <select  class="form-control" id="area-city">
+                                        </select>
+                                </div>
+                                <div class="form-group padding-right area-select" style="display: none;">
+                                    <label>管理区域：</label>
+                                        <select class="form-control" id="custom-area" name="custom_area_id"></select>
+                                </div>
+                        </div>
+                        <div class="form-horizontal">
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">门店名称：</label>
+                            <div class="col-sm-2">
+                                <input type="hidden" class="form-control" name="id" value='<?php echo $store["id"]; ?>'>
+                                <input type="text" class="form-control" name="name" value='<?php echo $store["name"]; ?>'>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">门店详细地址：</label>
+                            <div class="col-sm-2">
+                                <input type="text" class="form-control" name="address" id="suggestId" value='<?php echo $store["address"]; ?>'>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">门店联系方式：</label>
+                            <div class="col-sm-2">
+                                <input type="text" class="form-control" name="tel" value='<?php echo $store["tel"]; ?>'>
+                            </div>
+                        </div>
+
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">开业时间：</label>
+                            <div class="col-sm-2">
+                                <input type="text" class="form-control laydate-icon" name="opentime" id="date" value='<?php echo $store["opentime"]; ?>'>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">百度地图：</label>
+                            <div class="col-sm-8 map-addr">
+                                <div id="allmap"></div>
+                                <div id="searchResultPanel" style="border:1px solid #C0C0C0;width:150px;height:auto; display:none;"></div>
+                                <input type="hidden" class="form-control " name="longitude" value='<?php echo $store["longitude"]; ?>'>
+                                <input type="hidden" class="form-control " name="latitude" value='<?php echo $store["latitude"]; ?>'>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">门店图片：</label>
+                            <div class="col-sm-8">
+                            <ul class="imgListUp">
+                            <?php foreach ($store['imagesList'] as $item): ?>
+                                <li>
+                                    <div class="file_bar">
+                                        <p class="file_name"><?php echo $item; ?></p>
+                                        <span class="file_del" data-index="0" title="删除"></span>
+                                    </div>
+                                    <img src="/public/uploads/<?php echo $item; ?>">
+                                    <input type="hidden" value="<?php echo $item; ?>" name="imagesList[]">
+                                </li>
+                            <?php endforeach; ?> 
+                            </ul>
+                                <div id="selector" class="btn btn-primary uploadFileBtn">选择图片</div>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+        
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <button type="submit" class="btn btn-primary">编辑门店</button>
+                                <a class="btn btn-white" href="/admin/StoreManage/storeList">取消</a>
+                            </div>
+                        </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        window.onload = function(){
+                // 创建一个上传参数
+
+            var up = new Upload("<?php echo site_url('admin/Index/do_upload') ?>",'selector');
+
+            addressInit('area-large', 'area-province', 'area-city','<?php echo $areas["largeid"]; ?>','<?php echo $areas["provinceid"]; ?>','<?php echo $areas["cityid"]; ?>');//默认为昆明
+            laydate.skin('molv');
+            laydate({
+               elem: '#date'
+            })
+            // cityChange();
+
+            getCustomArea($('#area-city').val(),'city','<?php echo $store["custom_area_id"]; ?>');
+            intEdit();
+
+            $('#area-large').change(function(){
+                cityChange();
+                getCustomArea($(this).val(),'large');
+            })
+            
+            $('#area-province').change(function(){
+                cityChange();
+                getCustomArea($(this).val(),'province');
+            })
+
+            $('#area-city').change(function(){
+                cityChange();
+                getCustomArea($(this).val(),'city');
+            })
+
+            $("#form-store-edit").validate({
+                rules: {
+                  name:"required",
+                  address:"required",
+                  tel:"required",
+                  opentime:"required",
+                  address:"required",
+                },
+                messages: {
+                  name: "请输入门店名称",
+                  address: "请输入门店联系地址",
+                  tel: "请输入门店联系方式",
+                  opentime: "请输入门店开业时间",
+                  name: "请输入门店名称",
+                },
+                submitHandler:function(form){
+                    $.ajax({
+                     type: "POST",
+                     url: "/admin/StoreManage/editStore",
+                     data: $(form).serialize(),
+                     dataType: "json",
+                     success: function(data){
+                        if(data.status=='success'){
+                            layer.msg(data.message,{icon: 1});
+                            window.location.href = '/admin/StoreManage/storeList';
+                        }else{
+                            layer.msg(data.message,{icon: 2});
+                        }
+                     }})
+                }
+            })
+
+
+        }
+
+
+
+        function getCustomArea(id,type,defultId){
+            // console.log(defultId);
+            $.ajax({
+                 type: "POST",
+                 url: "<?php echo site_url('admin/StoreManage/getCustomArea') ?>",
+                 data: {id:id,type:type},
+                 async: true,
+                 dataType: "json",
+                 success: function(data){
+                    if(data.status=='success'){
+                        if(data.data.length== 0){
+                            $('.area-select').css('display','none');
+                        }else{
+                            $('.area-select').css('display','inline-block');
+                        }
+                        area = $('#custom-area');
+                        str = "";
+                        selected = "";
+                        if(typeof(defultId)!="undefined"){
+                            for(var i=0; i<data.data.length; i++){
+                                if(defultId==data.data[i]['id']){
+                                    selected = "selected='selected'";
+                                    str+= '<option '+selected+' value="'+data.data[i]['id']+'">'+data.data[i]['name']+'</option>';
+                                }else{
+                                    str+= '<option value="'+data.data[i]['id']+'">'+data.data[i]['name']+'</option>';
+                                }
+                            }
+                        }else{
+                            for(var i=0; i<data.data.length; i++){
+                                str+= '<option value="'+data.data[i]['id']+'">'+data.data[i]['name']+'</option>';
+                            }
+                        }
+                        area.html(str);
+                    }
+             }})
+        }
+
+
+
+        function cityChange(){
+            city = document.getElementById('area-city');
+            var s_index = city.selectedIndex;
+            var cityName = city.options[s_index].text;
+            cityName = typeof(cityName) != "undefined" ? cityName : '昆明市';
+            map(cityName);
+        }
+
+        function map(cityName){
+            // 百度地图API功能
+            function G(id) {
+                return document.getElementById(id);
+            }
+
+            var map = new BMap.Map("allmap");
+            map.centerAndZoom(cityName,12);                   // 初始化地图,设置城市和地图级别。
+            map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
+            var ac = new BMap.Autocomplete(    //建立一个自动完成的对象
+                {"input" : "suggestId"
+                ,"location" : map
+            });
+            // ac.setInputValue("444");
+            ac.addEventListener("onhighlight", function(e) {  //鼠标放在下拉列表上的事件
+            var str = "";
+                var _value = e.fromitem.value;
+                var value = "";
+                if (e.fromitem.index > -1) {
+                    value = _value.province +  _value.city +  _value.district +  _value.street +  _value.business;
+                }    
+                str = "FromItem<br />index = " + e.fromitem.index + "<br />value = " + value;
+                
+                value = "";
+                if (e.toitem.index > -1) {
+                    _value = e.toitem.value;
+                    value = _value.province +  _value.city +  _value.district +  _value.street +  _value.business;
+                }    
+                str += "<br />ToItem<br />index = " + e.toitem.index + "<br />value = " + value;
+                G("searchResultPanel").innerHTML = str;
+            });
+
+            var myValue;
+            ac.addEventListener("onconfirm", function(e) {    //鼠标点击下拉列表后的事件
+            var _value = e.item.value;
+                myValue = _value.province +  _value.city +  _value.district +  _value.street +  _value.business;
+                G("searchResultPanel").innerHTML ="onconfirm<br />index = " + e.item.index + "<br />myValue = " + myValue;
+                
+                setPlace();
+            });
+
+            function setPlace(){
+                map.clearOverlays();    //清除地图上所有覆盖物
+                function myFun(){
+                    var pp = local.getResults().getPoi(0).point;    //获取第一个智能搜索的结果
+                    map.centerAndZoom(pp, 18);
+                    map.addOverlay(new BMap.Marker(pp));    //添加标注
+                    $('input[name=longitude]').val(pp.lng);
+                    $('input[name=latitude]').val(pp.lat);
+
+                }
+                var local = new BMap.LocalSearch(map, { //智能搜索
+                  onSearchComplete: myFun
+                });
+                local.search(myValue);
+            }
+        }
+
+
+        function intEdit(){
+            // 百度地图API功能
+            function G(id) {
+                return document.getElementById(id);
+            }
+
+            var map = new BMap.Map("allmap");
+            pp = new BMap.Point('<?php echo $store["longitude"]; ?>', '<?php echo $store["latitude"]; ?>');
+            map.centerAndZoom(pp,20);
+            map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
+            var ac = new BMap.Autocomplete(    //建立一个自动完成的对象
+                {"input" : "suggestId"
+                ,"location" : map
+            });
+            ac.setInputValue('<?php echo $store["address"]; ?>');
+            
+            map.addOverlay(new BMap.Marker(pp));
+            ac.addEventListener("onhighlight", function(e) {  //鼠标放在下拉列表上的事件
+            var str = "";
+                var _value = e.fromitem.value;
+                var value = "";
+                if (e.fromitem.index > -1) {
+                    value = _value.province +  _value.city +  _value.district +  _value.street +  _value.business;
+                }    
+                str = "FromItem<br />index = " + e.fromitem.index + "<br />value = " + value;
+                
+                value = "";
+                if (e.toitem.index > -1) {
+                    _value = e.toitem.value;
+                    value = _value.province +  _value.city +  _value.district +  _value.street +  _value.business;
+                }    
+                str += "<br />ToItem<br />index = " + e.toitem.index + "<br />value = " + value;
+                G("searchResultPanel").innerHTML = str;
+            });
+
+            var myValue;
+            ac.addEventListener("onconfirm", function(e) {    //鼠标点击下拉列表后的事件
+            var _value = e.item.value;
+                myValue = _value.province +  _value.city +  _value.district +  _value.street +  _value.business;
+                G("searchResultPanel").innerHTML ="onconfirm<br />index = " + e.item.index + "<br />myValue = " + myValue;
+                
+                setPlace();
+            });
+
+            function setPlace(){
+                map.clearOverlays();    //清除地图上所有覆盖物
+                function myFun(){
+                    var pp = local.getResults().getPoi(0).point;    //获取第一个智能搜索的结果
+                    map.centerAndZoom(pp, 18);
+                    map.addOverlay(new BMap.Marker(pp));    //添加标注
+                    $('input[name=longitude]').val(pp.lng);
+                    $('input[name=latitude]').val(pp.lat);
+
+                }
+                var local = new BMap.LocalSearch(map, { //智能搜索
+                  onSearchComplete: myFun
+                });
+                local.search(myValue);
+            }
+        }
+    </script>
+<?php $this->load->view('admin/Common/footer.html');?>          
+
+
+

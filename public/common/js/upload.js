@@ -23,7 +23,7 @@ function Upload(url,btnId){
             },
             // 上传完成之后
             onComplete: function (file, response) {
-            	response = JSON.parse(response)
+            	response = JSON.parse(response);
                 if (response.status == "success")
             	{
  
@@ -33,7 +33,8 @@ function Upload(url,btnId){
                  	$("#"+btnId).html("选择图片");
             	}
                 else{
-                	$("#"+btnId).html(response.message);
+                    layer.msg(response.message,{icon: 2});
+                	$("#"+btnId).html('选择图片');
                 } 
                 	
             }
@@ -47,7 +48,9 @@ function Upload(url,btnId){
 
 
         var ulStr = '<ul class="imgListUp"></ul>';
-        $("#"+this.btnId).before(ulStr);
+        if(!$(".imgListUp").length > 0){
+            $("#"+this.btnId).before(ulStr);
+        }
 	}
 	this.init(btnId);
 }

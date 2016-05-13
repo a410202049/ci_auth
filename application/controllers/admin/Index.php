@@ -81,9 +81,10 @@ class Index extends Base_Controller {
         // $config['max_height']       = 768;
         $this->load->library('upload', $config);
         if ( ! $this->upload->do_upload('file'))
-        {
-            $error = array('error' => $this->upload->display_errors());
-            $this->response_data('error',$error);
+        {	
+        	// echo $this->upload->display_errors();
+        	// exit;
+            $this->response_data('error', strip_tags($this->upload->display_errors()));
         }
         else
         {
