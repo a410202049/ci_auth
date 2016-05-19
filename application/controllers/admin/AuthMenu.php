@@ -85,7 +85,6 @@ class AuthMenu extends Auth_Controller {
             $data['password'] = md5($this->input->post('password'));
             $data['last_login_time'] = time();      //创建时间
             $data['last_login_ip'] = '0.0.0.0';
-            $data['is_manage'] = '1'; 
             $where['username'] = $this->input->post('username');
             $result = $this->db->get_where('user', $where)->row_array();
             if(!empty($result)){
@@ -195,6 +194,10 @@ class AuthMenu extends Auth_Controller {
                 $this->response_data('error','用户组已经存在');
             }
             $data['title'] = $arr['title'];
+            $data['role'] = $arr['role'];
+            if($arr['role'] =='2'){
+                $data['leve'] = $arr['leve'];
+            }
             $data['rules'] = implode(',', $arr['rule']);
             $data['create_time'] = time();
             if($this->db->insert('auth_group', $data)){

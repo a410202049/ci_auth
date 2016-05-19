@@ -26,20 +26,18 @@ class Index extends Base_Controller {
 		$username = $this->input->post('username');
 		$password = $this->input->post('password');
 		$this->load->model('user_model', 'user');
-		$userData = $this->user->getUser($username,1);
+		$userData = $this->user->getUser($username);
 
 		if(!$userData || $userData['password'] != md5($password)) $this->session->set_flashdata('error', "用户名或者密码不正确");
+
+		$this->load->library('auth');
+		$group = $this->auth->getGroups($userData['id']);
+		if(!$group) $this->session->set_flashdata('error', "用户名或者密码不正确");//此处判断是否为系统管理员或业务员
 		if($this->session->flashdata('error')){
 			redirect(base_url('admin/Index'));
 		}
 		$this->session->set_userdata('aid',$userData['id']);
 		
-		// $this->load->library('auth');
-		// $this->load->library('Location','location');
-  //       $group = $this->auth->getGroups($userData['id']);
-  //       $userData['groupname'] = $group ? $group[0]['title'] :'没有用户组';
-  //       $userData['address'] = $this->location->getlocation($userData['last_login_ip']);
-		// $this->session->set_userdata('userinfo',$userData);
 
 		$this->db->update('user', array('last_login_time'=>time(),'last_login_ip'=>$this->input->ip_address()), array('id'=>$userData['id']));
 		redirect(base_url('admin/Main'));

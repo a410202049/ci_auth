@@ -7,8 +7,9 @@ class User_model extends CI_Model{
 	/**
 	 * 查询后台用户数据
 	 */
-	public function getUser($username,$isManage = 0){
-		$data = $this->db->get_where('user', array('username'=>$username,'is_manage' =>$isManage))->row_array();
+	public function getUser($username){
+		$data = array();
+		$data = $this->db->where(array('username'=>$username))->get('user')->row_array();
 		return $data;
 	}
 

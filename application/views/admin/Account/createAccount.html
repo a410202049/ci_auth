@@ -1,0 +1,241 @@
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=3ILYr69BvR9fs4FveYgPTLnzhH3CcsSy"></script>
+    <style type="text/css">
+        #allmap {width: 100%;height: 100%;overflow: hidden;margin:0;font-family:"微软雅黑";}
+        .map-addr{
+            height: 500px;
+        }
+        .store{
+            margin-right: 15px;
+        }
+        .uploadFileBtn{
+/*            width: 150px;
+            height: 50px;
+            background: #999;
+            color: #fff;*/
+        }
+    </style>
+<?php $this->load->view('admin/Common/nav.html');?>
+    <div class="row">
+        <div class="col-lg-12">
+
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>添加用户组</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <?php
+                        $leves = $this->config->item('leve');
+                    ?>
+                    <form method="post"  id="form-store-add">
+                        <div class="form-group row">
+                            <div class="col-sm-1">
+                            <label>用户组设置：</label>
+                                <select  class="form-control" id="group-setting">
+                                    <?php foreach ($leves as $key => $value): ?>
+                                        <option value="<?php echo $key;?>"><?php echo $value;?></option>
+                                    <?php endforeach; ?> 
+                                </select>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-inline" id="linkAge">
+<!--                                 <div class="form-group padding-right lagre">
+                                    <label>大区：</label>
+                                        <select  class="form-control" id="area-large">
+                                        </select>
+                                </div>
+                                <div class="form-group padding-right province" style="display: none;">
+                                    <label>省：</label>
+                                        <select  class="form-control" id="area-province">
+                                        </select>
+                                </div>
+                                <div class="form-group padding-right city" style="display: none;">
+                                    <label>市：</label>
+                                        <select  class="form-control" id="area-city">
+                                        </select>
+                                </div>
+                                <div class="form-group padding-right area-select area" style="display: none;">
+                                    <label>管理区域：</label>
+                                        <select class="form-control" id="custom-area" name="custom_area_id"></select>
+                                </div>
+                                <div class="form-group padding-right store" style="display: none;">
+                                    <label>门店：</label>
+                                        <select class="form-control" id="store" name="store_id"></select>
+                                </div>
+                                <div class="form-group padding-right storeManager" style="display: none;">
+                                    <label>店经理：</label>
+                                        <select class="form-control" id="storeManager" name="storeManager"></select>
+                                </div> -->
+                        </div>
+                        <div class="form-horizontal">
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <div class="col-sm-4 col-sm-offset-2">
+                                    <button type="submit" class="btn btn-primary">添加门店</button>
+                                    <a class="btn btn-white" href="/admin/StoreManage/storeList">取消</a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="<?php echo base_url('public/common/js/jsAddress.js')?>"></script>
+    <script type="text/javascript">
+        window.onload = function(){
+            // addressInit('area-large', 'area-province', 'area-city','6','530000','530100');//默认为昆明
+            // getCustomArea($('#area-city').val(),'city');
+            // var val = $('#group-setting').val();
+            // changeSelect(val);
+
+            $('#group-setting').change(function(){
+                v = $(this).val();
+                getLarge(v);
+            });
+
+            function getLarge(groupid){
+                $.ajax({
+                     type: "POST",
+                     url: "<?php echo site_url('admin/Account/getLinkAge') ?>",
+                     data: {groupid:groupid},
+                     dataType: "json",
+                     success: function(data){
+                        if(data.status=='success'){
+                            console.log(data);
+                            // if(data.data.length== 0){
+                            //     $('.area-select').css('display','none');
+                            // }else if($('#group-setting').val() == '3'){
+                            //     $('.area-select').css('display','inline-block');
+                            // }
+                            // area = $('#custom-area');
+                            // str = "";
+                            // for(var i=0; i<data.data.length; i++){
+                            //     str+= '<option value="'+data.data[i]['id']+'">'+data.data[i]['name']+'</option>';
+                            // }
+                            // area.html(str);
+                        }
+                 }})
+            }
+            // function changeSelect(val){
+            //     switch(val)
+            //     {
+            //         case '1':
+            //             $('.province').css('display','none');
+            //             $('.city').css('display','none');
+            //             $('.area').css('display','none');
+            //             $('.store').css('display','none');
+            //             $('.storeManager').css('display','none');
+            //           break;
+            //         case '2':
+            //             $('.province').css('display','inline-block');
+            //             $('.city').css('display','inline-block');
+            //             $('.area').css('display','none');
+            //             $('.store').css('display','none');
+            //           break;
+            //         case '3':
+            //             $('.province').css('display','inline-block');
+            //             $('.city').css('display','inline-block');
+            //             getCustomArea($('#area-city').val(),'city');
+            //             $('.store').css('display','none');
+            //             // $('.area').css('display','inline-block');
+            //             // $('.city').css('display','inline-block');
+            //           break;
+            //         case '4':
+            //         case '5':
+            //             $('.province').css('display','inline-block');
+            //             $('.city').css('display','inline-block');
+            //             getCustomArea($('#area-city').val(),'city');
+            //             $('.area').css('display','inline-block');
+            //             // $('.store').css('display','inline-block');
+            //             getStore($('#custom-area').val());
+            //         // default:
+            //         //   n 与 case 1 和 case 2 不同时执行的代码
+            //     }
+            // }
+
+            // $('#custom-area').change(function(){
+            //     getStore($('#custom-area').val());
+            // })
+
+            // $('#area-large').change(function(){
+            //     getCustomArea($(this).val(),'large');
+            //     getStore($('#custom-area').val());
+            // })
+            
+            // $('#area-province').change(function(){
+            //     getCustomArea($(this).val(),'province');
+            //     getStore($('#custom-area').val());
+            // })
+
+            // $('#area-city').change(function(){
+            //     getCustomArea($(this).val(),'city');
+            //     getStore($('#custom-area').val());
+            //     // getStore($(this).val());
+            // })
+
+        }
+
+
+
+        // function getCustomArea(id,type){
+        //     $.ajax({
+        //          type: "POST",
+        //          url: "<?php echo site_url('admin/StoreManage/getCustomArea') ?>",
+        //          data: {id:id,type:type},
+        //          dataType: "json",
+        //          success: function(data){
+        //             if(data.status=='success'){
+        //                 if(data.data.length== 0){
+        //                     $('.area-select').css('display','none');
+        //                 }else if($('#group-setting').val() == '3'){
+        //                     $('.area-select').css('display','inline-block');
+        //                 }
+        //                 area = $('#custom-area');
+        //                 str = "";
+        //                 for(var i=0; i<data.data.length; i++){
+        //                     str+= '<option value="'+data.data[i]['id']+'">'+data.data[i]['name']+'</option>';
+        //                 }
+        //                 area.html(str);
+        //             }
+        //      }})
+        // }
+
+        // function getStore(id){
+        //     $.ajax({
+        //          type: "POST",
+        //          url: "<?php echo site_url('admin/Account/getStore') ?>",
+        //          data: {id:id},
+        //          dataType: "json",
+        //          success: function(data){
+        //             if(data.status=='success'){
+        //                 if(data.data.length== 0){
+        //                     $('.store').css('display','none');
+        //                 }else if($('#group-setting').val() == '4' || $('#group-setting').val() == '5'){
+        //                     store = $('#store');
+        //                     str = "";
+        //                     for(var i=0; i<data.data.length; i++){
+        //                         str+= '<option value="'+data.data[i]['id']+'">'+data.data[i]['name']+'</option>';
+        //                     }
+        //                     store.html(str);
+        //                     $('.store').css('display','inline-block');
+        //                 }
+
+        //             }
+        //      }})
+        // }
+
+    </script>
+<?php $this->load->view('admin/Common/footer.html');?>          
+
+
+
