@@ -132,18 +132,18 @@
             cityChange();
             getCustomArea($('#area-city').val(),'city');
             $('#area-large').change(function(){
-                cityChange();
                 getCustomArea($(this).val(),'large');
+                cityChange();
             })
             
             $('#area-province').change(function(){
-                cityChange();
                 getCustomArea($(this).val(),'province');
+                cityChange();
             })
 
             $('#area-city').change(function(){
-                cityChange();
                 getCustomArea($(this).val(),'city');
+                cityChange();
             })
 
             $("#form-store-add").validate({
@@ -212,6 +212,12 @@
             var s_index = city.selectedIndex;
             var cityName = city.options[s_index].text;
             cityName = typeof(cityName) != "undefined" ? cityName : '昆明市';
+            if(cityName =='市辖区' || cityName =='县' || cityName =='市'){
+                province = document.getElementById('area-province');
+                var p_index = province.selectedIndex;
+                var province = province.options[p_index].text;
+                cityName = province;
+            }
             map(cityName);
         }
 
