@@ -111,15 +111,14 @@ class AuthMenu extends Auth_Controller {
      * 管理员列表
      */
     public function adminList(){
-        $admins = $this->db->get('user')->result_array();
+        $admins = $this->db->select('u.id,u.username,group.title,u.last_login_ip,u.status,u.last_login_time')->from('user as u')->join('auth_group_access as access', 'u.id = access.uid')->join('auth_group as group','group.id = access.group_id')->where(array('group.role'=>'1'))->get()->result_array();
         foreach ($admins as $key => $value) {
             $group = $this->auth->getGroups($value['id']);
-            $admins[$key]['groupname'] = $group ? $group[0]['title'] :'没有用户组';
             $admins[$key]['last_login_time'] = date('Y-m-d H:i:s',$value['last_login_time']);
             $admins[$key]['status'] = $value['status'] ? '启用' : '禁用';
             $admins[$key]['disable'] = $value['status'] ? '禁用' : '启用';
         }
-        $groups = $this->db->get('auth_group')->result_array();
+        $groups = $this->db->where(array('role'=>'1'))->get('auth_group')->result_array();
         $arr['admins'] = $admins;
         $arr['groups'] = $groups;
         $this->load->view('admin/AuthMenu/adminList.html',$arr);
@@ -197,9 +196,14 @@ class AuthMenu extends Auth_Controller {
             $data['role'] = $arr['role'];
             if($arr['role'] =='2'){
                 $data['leve'] = $arr['leve'];
+                if($this->db->get_where('auth_group', array('leve'=>$arr['leve']))->row_array()){
+                    $this->response_data('error','该权限的业务员用户组已经存在');
+                }
             }
             $data['rules'] = implode(',', $arr['rule']);
             $data['create_time'] = time();
+
+
             if($this->db->insert('auth_group', $data)){
                 $this->response_data('success','用户组添加成功');
             }else{
@@ -242,6 +246,10 @@ class AuthMenu extends Auth_Controller {
             $id = $arr['id'];
             // $data['id'] = $id;
             $data['title'] = $arr['title'];
+            $data['role'] = $arr['role'];
+            if($arr['role'] =='2'){
+                $data['leve'] = $arr['leve'];
+            }
             $data['rules'] = implode(',', $arr['rule']);
             if($this->db->update('auth_group',$data,array('id'=>$id))){
                 $this->response_data('success','用户组编辑成功');

@@ -1,4 +1,4 @@
-function Upload(url,btnId){
+function Upload(url,btnId,single){
 	this.btnId=btnId;
 	this.url=url;
 	this.init=function(btnId){
@@ -28,8 +28,14 @@ function Upload(url,btnId){
             	{
  
                     str ='<li><div class="file_bar"><p class="file_name">'+response.data.file_name+'</p><span title="删除" data-index="0" class="file_del"></span></div>';
-                    str+='<img src="/public/uploads/'+response.data.file_name+'"><input type="hidden" name="imagesList[]" value="'+response.data.file_name+'"></li>';
-                 	$('.imgListUp').append(str);
+                 	if(single){
+                        str+='<img src="/public/uploads/'+response.data.file_name+'"><input type="hidden" name="imagesList" value="'+response.data.file_name+'"></li>';
+                        $('.imgListUp').html(str);
+                    }else{
+                        str+='<img src="/public/uploads/'+response.data.file_name+'"><input type="hidden" name="imagesList[]" value="'+response.data.file_name+'"></li>';
+                        $('.imgListUp').append(str);
+                    }
+
                  	$("#"+btnId).html("选择图片");
             	}
                 else{

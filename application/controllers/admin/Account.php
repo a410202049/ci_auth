@@ -23,6 +23,105 @@ class Account extends Auth_Controller {
 	}
 
 	/**
+	 * 添加账号第一步
+	 */
+	public function createAccountStep(){
+		if($this->input->is_ajax_request()){
+			$arr = $this->input->post();
+			if(!isset($arr['imagesList'])){
+				$this->response_data('error','请上传照片');
+			}
+			if(!isset($arr['groupid'])){
+				$this->response_data('error','参数不正确');
+			}
+			$groupid = intval($arr['groupid']);
+			$type = "";
+			$tyepId = "";
+			$relationArr = array();
+			switch ($groupid) {
+				case 1://大区经理
+					if(!isset($arr['large'])){
+						$this->response_data('error','请选择大区');
+					}
+					$type = 'large';
+					$tyepId = $arr['large'];
+					break;
+				case 2://城市经理
+					if(!isset($arr['city'])){
+						$this->response_data('error','请选择城市');
+					}
+					$type = 'city';
+					$tyepId = $arr['city'];
+					break;
+				case 3://区域经理
+					if(!isset($arr['area'])){
+						$this->response_data('error','请选择区域');
+					}
+					$type = 'area';
+					$tyepId = $arr['area'];
+					break;
+				case 4://店秘
+				case 5://店经理
+					if(!isset($arr['store'])){
+						$this->response_data('error','请选择门店');
+					}
+					$type = 'store';
+					$tyepId = $arr['store'];
+					break;
+				case 6://销售顾问
+					$type = 'manager';
+					break;
+			}
+
+			if($this->db->get_where('user', array('username'=>$arr['phone']))->row_array()){
+				$this->response_data('error','该手机号已经被注册');
+			}
+
+			$relationArr['type'] = $type;
+			$relationArr['leve'] = $groupid;
+			$relationArr['tyepid'] = $tyepId;
+
+            $data['username'] = $arr['phone'];
+            $data['password'] = md5(substr($arr['idcard'], -6));
+            $data['last_login_time'] = time();      //创建时间
+            $data['last_login_ip'] = '0.0.0.0';
+            $data['idcard'] = $arr['idcard'];
+            $data['avatar'] = $arr['imagesList'];
+            $data['phone'] = $arr['phone'];
+            $data['nickname'] = $arr['nickname'];
+
+            $this->db->trans_begin();//事务开始
+            $this->db->insert('user', $data);
+            $uid = $this->db->insert_id();
+            $relationArr['uid'] = $uid;
+            $this->db->insert('userleverelation', $relationArr);
+            $group = $this->db->get_where('auth_group', array('leve'=>$relationArr['leve']))->row_array();//根据级别查询组
+            $group_id = $group['id'];//得到权限组ID，注上面变量的 $groupid 为级别id
+            $result['uid'] = $uid;
+            $result['group_id'] = $group_id; //用户组ID
+            $this->db->insert('auth_group_access', $result);
+            if ($this->db->trans_status() === FALSE)
+			{
+			    $this->db->trans_rollback();
+			    $this->response_data('error','账号添加失败');
+			}
+			else
+			{
+			    $this->db->trans_commit();
+			    $this->response_data('success','账号添加成功');
+			}
+
+			//此处需要判断每个角色只能存在一个 除销售人员外
+
+
+		}else{
+			$arr = $this->input->get();
+			$data['data'] = json_encode($arr);
+			$this->load->view('admin/Account/createAccountStep.html',$data);
+		}
+	}
+
+	/**
 	 * 根据i区域d获取门店
 	 */
 	public function getLinkAge(){

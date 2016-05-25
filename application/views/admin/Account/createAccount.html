@@ -34,11 +34,11 @@
                     <?php
                         $leves = $this->config->item('leve');
                     ?>
-                    <form method="post"  id="form-store-add">
+                    <form method="GET"  id="form-store-add" action="<?php echo site_url('admin/Account/createAccountStep') ?>">
                         <div class="form-group row">
                             <div class="col-sm-1">
                             <label>用户组设置：</label>
-                                <select  class="form-control" id="group-setting">
+                                <select  class="form-control" id="group-setting" name="groupid">
                                     <?php foreach ($leves as $key => $value): ?>
                                         <option value="<?php echo $key;?>"><?php echo $value;?></option>
                                     <?php endforeach; ?> 
@@ -54,7 +54,7 @@
                             <div class="form-group">
                                 <div class="col-sm-4 col-sm-offset-2">
                                     <button type="submit" class="btn btn-primary">添加门店</button>
-                                    <a class="btn btn-white" href="/admin/Account/createAccount">取消</a>
+                                    <a class="btn btn-white" href="<?php echo site_url('admin/Account/createAccount') ?>">取消</a>
                                 </div>
                             </div>
                         </div>
@@ -93,7 +93,7 @@
                      dataType: "json",
                      success: function(data){
                         if(data.status=='success'){
-                            var selectStr = '<div class="form-group padding-right lagre"><label>大区：</label><select  class="form-control" id="area-large">';
+                            var selectStr = '<div class="form-group padding-right lagre"><label>大区：</label><select  class="form-control" id="area-large" name="large">';
                             for(var key in data.data['large']){
                                 if(data.data['largeDefult'] == data.data['large'][key].id){
                                     selectStr+="<option value='"+data.data['large'][key].id+"' selected>"+data.data['large'][key].name+"</option>";
@@ -103,7 +103,7 @@
                             } 
                             selectStr+='</select></div>';
                             if(typeof(data.data['provinces']) !="undefined"){
-                                selectStr+= '<div class="form-group padding-right province"><label>省：</label><select  class="form-control" id="area-province">';
+                                selectStr+= '<div class="form-group padding-right province"><label>省：</label><select  class="form-control" id="area-province" name="province">';
                                 for(var key in data.data['provinces']){
                                     if(data.data['provinceDefault'] == data.data['provinces'][key].provinceid){
                                         selectStr+="<option value='"+data.data['provinces'][key].provinceid+"' selected>"+data.data['provinces'][key].province+"</option>";
@@ -115,7 +115,7 @@
                             }                          
                             
                             if(typeof(data.data['citys']) !="undefined"){
-                                selectStr+= '<div class="form-group padding-right city"><label>市：</label><select  class="form-control" id="area-city">';
+                                selectStr+= '<div class="form-group padding-right city"><label>市：</label><select  class="form-control" id="area-city" name="city">';
                                 for(var key in data.data['citys']){
                                     if(data.data['cityDefault'] == data.data['citys'][key].cityid){
                                         selectStr+="<option value='"+data.data['citys'][key].cityid+"' selected>"+data.data['citys'][key].city+"</option>";
@@ -127,7 +127,7 @@
                             }
 
                             if(typeof(data.data['areas']) !="undefined" && data.data['areas']!="" ){
-                                selectStr+= '<div class="form-group padding-right area-select area"><label>管理区域：</label><select  class="form-control" id="custom-area" name="custom_area_id">';
+                                selectStr+= '<div class="form-group padding-right area-select area"><label>管理区域：</label><select  class="form-control" id="custom-area" name="area">';
                                 for(var key in data.data['areas']){
                                     if(data.data['areaDefult'] == data.data['areas'][key].id){
                                         selectStr+="<option value='"+data.data['areas'][key].id+"' selected>"+data.data['areas'][key].name+"</option>";
@@ -139,7 +139,7 @@
                             }
 
                             if(typeof(data.data['stores']) !="undefined" && data.data['stores']!=""){
-                                selectStr+= '<div class="form-group padding-right store"><label>门店：</label><select  class="form-control" id="store" name="store_id">';
+                                selectStr+= '<div class="form-group padding-right store"><label>门店：</label><select  class="form-control" id="store" name="store">';
                                 for(var key in data.data['stores']){
                                     if(data.data['storeDefult'] == data.data['stores'][key].id){
                                         selectStr+="<option value='"+data.data['stores'][key].id+"' selected>"+data.data['stores'][key].name+"</option>";
