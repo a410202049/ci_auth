@@ -48,40 +48,13 @@
                         <div class="hr-line-dashed"></div>
                         <div class="form-inline" id="linkAge">
 
-<!--                                 <div class="form-group padding-right lagre">
-                                    <label>大区：</label>
-                                        <select  class="form-control" id="area-large">
-                                        </select>
-                                </div>
-                                <div class="form-group padding-right province" style="display: none;">
-                                    <label>省：</label>
-                                        <select  class="form-control" id="area-province">
-                                        </select>
-                                </div>
-                                <div class="form-group padding-right city" style="display: none;">
-                                    <label>市：</label>
-                                        <select  class="form-control" id="area-city">
-                                        </select>
-                                </div>
-                                <div class="form-group padding-right area-select area" style="display: none;">
-                                    <label>管理区域：</label>
-                                        <select class="form-control" id="custom-area" name="custom_area_id"></select>
-                                </div>
-                                <div class="form-group padding-right store" style="display: none;">
-                                    <label>门店：</label>
-                                        <select class="form-control" id="store" name="store_id"></select>
-                                </div>
-                                <div class="form-group padding-right storeManager" style="display: none;">
-                                    <label>店经理：</label>
-                                        <select class="form-control" id="storeManager" name="storeManager"></select>
-                                </div> -->
                         </div>
                         <div class="form-horizontal">
                             <div class="hr-line-dashed"></div>
                             <div class="form-group">
                                 <div class="col-sm-4 col-sm-offset-2">
                                     <button type="submit" class="btn btn-primary">添加门店</button>
-                                    <a class="btn btn-white" href="/admin/StoreManage/storeList">取消</a>
+                                    <a class="btn btn-white" href="/admin/Account/createAccount">取消</a>
                                 </div>
                             </div>
                         </div>
@@ -103,7 +76,7 @@
                 v = $(this).val();
                 if(v !='1' ){
                     arr['largeDefult'] = '6';
-                    arr['provincesDefault'] = '530000';
+                    arr['provinceDefault'] = '530000';
                     arr['cityDefault'] = '530100';
                 }
                 arr['groupid'] = v;
@@ -156,7 +129,7 @@
                             if(typeof(data.data['areas']) !="undefined" && data.data['areas']!="" ){
                                 selectStr+= '<div class="form-group padding-right area-select area"><label>管理区域：</label><select  class="form-control" id="custom-area" name="custom_area_id">';
                                 for(var key in data.data['areas']){
-                                    if(data.data['areasDefault'] == data.data['areas'][key].id){
+                                    if(data.data['areaDefult'] == data.data['areas'][key].id){
                                         selectStr+="<option value='"+data.data['areas'][key].id+"' selected>"+data.data['areas'][key].name+"</option>";
                                     }else{
                                         selectStr+="<option value='"+data.data['areas'][key].id+"'>"+data.data['areas'][key].name+"</option>";
@@ -191,119 +164,59 @@
                     arr['largeDefult'] = largeDefult;
                     getLarge(arr);
                 }
-
             });
 
-            // //省份change
-            // $('body').on('change','#area-province',function(){
-            //     groupid = parseInt($('#group-setting').val());
-            //     var arr = {}; 
-            //     arr['groupid'] = groupid;
-            //     switch(groupid){
-            //         case '2':
-            //             largeDefult = $('#area-large').val();
-            //             arr['largeDefult'] = largeDefult;
-            //             arr['provincesDefault'] = $('#area-province').val();
-            //         break;
-            //         default:
+            //省份change
+            $('body').on('change','#area-province',function(){
+                groupid = parseInt($('#group-setting').val());
+                var arr = {}; 
+                arr['groupid'] = groupid;
+                if(groupid != 1){
+                    largeDefult = $('#area-large').val();
+                    provinceDefault = $('#area-province').val();
+                    arr['largeDefult'] = largeDefult;
+                    arr['provinceDefault'] = provinceDefault;
+                    getLarge(arr);
+                }
+            });
 
-            //     }
-            //     getLarge(arr);
-            // });
+            //城市change
+            $('body').on('change','#area-city',function(){
+                groupid = parseInt($('#group-setting').val());
+                var arr = {}; 
+                arr['groupid'] = groupid;
+                if(groupid != 1){
+                    largeDefult = $('#area-large').val();
+                    provinceDefault = $('#area-province').val();
+                    cityDefault = $('#area-city').val();
+                    arr['largeDefult'] = largeDefult;
+                    arr['provinceDefault'] = provinceDefault;
+                    arr['cityDefault'] = cityDefault;
+                    getLarge(arr);
+                }
+            });
 
-            // area-province
+            //区域change
+            $('body').on('change','#custom-area',function(){
+                groupid = parseInt($('#group-setting').val());
+                var arr = {}; 
+                arr['groupid'] = groupid;
+                if(groupid != 1){
+                    largeDefult = $('#area-large').val();
+                    provinceDefault = $('#area-province').val();
+                    cityDefault = $('#area-city').val();
+                    areaDefult = $('#custom-area').val();
+                    arr['largeDefult'] = largeDefult;
+                    arr['provinceDefault'] = provinceDefault;
+                    arr['cityDefault'] = cityDefault;
+                    arr['areaDefult'] = areaDefult;
+                    getLarge(arr);
+                }
+            });
 
-            // $('#custom-area').change(function(){
-            //     getStore($('#custom-area').val());
-            // })
 
-            // $('#area-large').change(function(){
-            //     alert(1);
-            //     // groupid = $('#group-setting').val();
-            //     // switch(groupid)
-            //     // {
-            //     //     case 2:
-            //     //         alert(2);
-            //     //     case 3:
-            //     //         alert(3);
-            //     //     case 4:
-            //     //         alert(4);
-            //     //       break;
-            //     //     default:
-            //     // }
-            //     // large = $(this).val();
-            //     // arr['groupid'] = v;
-            //     // getLarge(arr);
-            //     // var groupid = groupid ? groupid : '';
-            //     // var largeDefult = largeDefult ? largeDefult : '';
-            //     // var cityDefault = cityDefault ? cityDefault : '';
-            //     // var provinceDefault = provinceDefault? provinceDefault :'';
-            //     // var areasDefault = areasDefault ? areasDefault : '';
-            //     // var storeDefult = storeDefult ? storeDefult : '';
-
-            // })
-            
-            // $('#area-province').change(function(){
-            //     getCustomArea($(this).val(),'province');
-            //     getStore($('#custom-area').val());
-            // })
-
-            // $('#area-city').change(function(){
-            //     getCustomArea($(this).val(),'city');
-            //     getStore($('#custom-area').val());
-            //     // getStore($(this).val());
-            // })
 
         }
-
-
-
-        // function getCustomArea(id,type){
-        //     $.ajax({
-        //          type: "POST",
-        //          url: "<?php echo site_url('admin/StoreManage/getCustomArea') ?>",
-        //          data: {id:id,type:type},
-        //          dataType: "json",
-        //          success: function(data){
-        //             if(data.status=='success'){
-        //                 if(data.data.length== 0){
-        //                     $('.area-select').css('display','none');
-        //                 }else if($('#group-setting').val() == '3'){
-        //                     $('.area-select').css('display','inline-block');
-        //                 }
-        //                 area = $('#custom-area');
-        //                 str = "";
-        //                 for(var i=0; i<data.data.length; i++){
-        //                     str+= '<option value="'+data.data[i]['id']+'">'+data.data[i]['name']+'</option>';
-        //                 }
-        //                 area.html(str);
-        //             }
-        //      }})
-        // }
-
-        // function getStore(id){
-        //     $.ajax({
-        //          type: "POST",
-        //          url: "<?php echo site_url('admin/Account/getStore') ?>",
-        //          data: {id:id},
-        //          dataType: "json",
-        //          success: function(data){
-        //             if(data.status=='success'){
-        //                 if(data.data.length== 0){
-        //                     $('.store').css('display','none');
-        //                 }else if($('#group-setting').val() == '4' || $('#group-setting').val() == '5'){
-        //                     store = $('#store');
-        //                     str = "";
-        //                     for(var i=0; i<data.data.length; i++){
-        //                         str+= '<option value="'+data.data[i]['id']+'">'+data.data[i]['name']+'</option>';
-        //                     }
-        //                     store.html(str);
-        //                     $('.store').css('display','inline-block');
-        //                 }
-
-        //             }
-        //      }})
-        // }
 
     </script>
 <?php $this->load->view('admin/Common/footer.html');?>          
