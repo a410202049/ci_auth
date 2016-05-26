@@ -27,7 +27,9 @@ class Index extends Base_Controller {
 		$password = $this->input->post('password');
 		$this->load->model('user_model', 'user');
 		$userData = $this->user->getUser($username);
-
+		if($userData['work_status'] =='0'){
+			$this->session->set_flashdata('error', "您已经离职，不能继续使用该系统");
+		}
 		if(!$userData || $userData['password'] != md5($password)) $this->session->set_flashdata('error', "用户名或者密码不正确");
 
 		$this->load->library('auth');

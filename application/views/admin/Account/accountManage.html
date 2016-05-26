@@ -23,16 +23,31 @@
                                     <th>用户名</th>
                                     <th>用户组</th>
                                     <th>最近登录IP</th>
-                                    <th>状态</th>
+                                    <th>工作状态</th>
                                     <th>最近登录时间</th>
+                                    <th>备注</th>
                                     <th>操作</th>
                                 </tr>
                             </thead>
                             <tbody>
-                           
+                            <?php foreach ($data as $item): ?>
+                                <tr>
+                                    <td><?php echo $item['id']; ?></td>
+                                    <td><?php echo $item['username']; ?></td>
+                                    <td><?php echo $item['title']; ?></td>
+                                    <td><?php echo $item['last_login_ip']; ?></td>
+                                    <td><?php echo $item['work_status']; ?></td>
+                                    <td><?php echo $item['last_login_time']; ?></td>
+                                    <td><?php echo $item['mark']; ?></td>
+                                    <td><a class="option edit_area" href="<?php echo site_url('admin/StoreManage/editStore').'/'.$item['id']; ?>">编辑</a>
+        <!-- |<a class="option del_area" data-id="<?php echo $item['id']; ?>">删除</a> -->
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?> 
                             </tbody>
                         </table>
                     </div>
+                    <?php echo $this->mypage_class->show(1); ?>
                 </div>
             </div>
         </div>

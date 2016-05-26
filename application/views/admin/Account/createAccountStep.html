@@ -65,8 +65,24 @@
                                 <div id="selector" class="btn btn-primary uploadFileBtn">选择图片</div>
                             </div>
                         </div>
+
                         <div class="hr-line-dashed"></div>
-        
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">工作状态：</label>
+                            <div class="col-sm-1">
+                                <select class="form-control m-b valid" name="work_status">
+                                    <option value="1">在职</option>
+                                    <option value="0">离职</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">备注：</label>
+                            <div class="col-sm-2">
+                                <input type="text" class="form-control" name="mark">
+                            </div>
+                        </div>
                         <div class="form-group">
                             <div class="col-sm-4 col-sm-offset-2">
                                 <button type="submit" class="btn btn-primary">添加账号</button>
@@ -128,7 +144,7 @@
                      success: function(data){
                         if(data.status=='success'){
                             layer.msg(data.message,{icon: 1});
-                            window.location.href = '/admin/StoreManage/storeList';
+                            window.location.href = '/admin/Account/accountManage';
                         }else{
                             layer.msg(data.message,{icon: 2});
                         }

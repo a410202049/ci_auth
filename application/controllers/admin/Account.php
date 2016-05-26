@@ -12,7 +12,24 @@ class Account extends Auth_Controller {
 	 * 账号列表
 	 */
 	public function accountManage(){
-		$this->load->view('admin/Account/accountManage.html');
+		$page_config['perpage']=5;   //每页条数
+		$page_config['part']=2;//当前页前后链接数量
+		$page_config['url']='admin/Account/accountManage';//url
+		$page_config['seg']=4;//参数取 index.php之后的段数，默认为3，即index.php/control/function/18 这种形式
+		$page_config['nowindex']=$this->uri->segment($page_config['seg']) ? $this->uri->segment($page_config['seg']):1;//当前页
+		$this->load->library('mypage_class');
+		$count = $this->db->select('u.id,u.username,group.title,u.last_login_ip,u.status,u.last_login_time,u.mark,u.work_status')->from('user as u')->join('auth_group_access as access', 'u.id = access.uid')->join('auth_group as group','group.id = access.group_id')->where(array('group.role'=>'2'))->count_all_results();
+		$page_config['total']= $count;
+		$this->mypage_class->initialize($page_config);
+
+		$data = $this->db->select('u.id,u.username,group.title,u.last_login_ip,u.status,u.last_login_time,u.mark,u.work_status')->from('user as u')->join('auth_group_access as access', 'u.id = access.uid')->join('auth_group as group','group.id = access.group_id')->where(array('group.role'=>'2'))->limit($page_config['perpage'],$page_config['perpage'] * ($page_config['nowindex'] - 1))->order_by('id','desc')->get()->result_array();
+		
+		foreach ($data as $key => $value) {
+			$data[$key]['work_status'] = $value['work_status'] =='1' ? "在职" : "离职";
+			$data[$key]['last_login_time'] = date('Y-m-d H:i:s',$value['last_login_time']);
+		}
+		$arr['data'] = $data;
+		$this->load->view('admin/Account/accountManage.html',$arr);
 	}
 
 	/**
@@ -36,7 +53,7 @@ class Account extends Auth_Controller {
 			}
 			$groupid = intval($arr['groupid']);
 			$type = "";
-			$tyepId = "";
+			$typeid = "";
 			$relationArr = array();
 			switch ($groupid) {
 				case 1://大区经理
@@ -44,32 +61,59 @@ class Account extends Auth_Controller {
 						$this->response_data('error','请选择大区');
 					}
 					$type = 'large';
-					$tyepId = $arr['large'];
+					$typeid = $arr['large'];
+					$largeData = $this->db->get_where('userleverelation', array('type'=>'large','typeid'=>$typeid))->row_array();
+					if($largeData){
+						$this->response_data('error','该大区经理角色已经存在');
+					}
 					break;
 				case 2://城市经理
 					if(!isset($arr['city'])){
 						$this->response_data('error','请选择城市');
 					}
 					$type = 'city';
-					$tyepId = $arr['city'];
+					$typeid = $arr['city'];
+					$cityData = $this->db->get_where('userleverelation', array('type'=>'city','typeid'=>$typeid))->row_array();
+					if($cityData){
+						$this->response_data('error','该城市经理角色已经存在');
+					}
 					break;
 				case 3://区域经理
 					if(!isset($arr['area'])){
 						$this->response_data('error','请选择区域');
 					}
 					$type = 'area';
-					$tyepId = $arr['area'];
+					$typeid = $arr['area'];
+					$cityData = $this->db->get_where('userleverelation', array('type'=>'area','typeid'=>$typeid))->row_array();
+					if($cityData){
+						$this->response_data('error','该区域经理角色已经存在');
+					}
 					break;
 				case 4://店秘
+					if(!isset($arr['store'])){
+						$this->response_data('error','请选择门店');
+					}
+					$type = 'store';
+					$typeid = $arr['store'];
+					$storeSecretary = $this->db->get_where('userleverelation', array('type'=>'store','typeid'=>$typeid,'leve'=>'4'))->row_array();
+					if($storeSecretary){
+						$this->response_data('error','该店店秘角色已经存在');
+					}
+					break;
 				case 5://店经理
 					if(!isset($arr['store'])){
 						$this->response_data('error','请选择门店');
 					}
 					$type = 'store';
-					$tyepId = $arr['store'];
+					$typeid = $arr['store'];
 					break;
 				case 6://销售顾问
+					if(!isset($arr['manager'])){
+						$this->response_data('error','请选择门店经理');
+					}
+
 					$type = 'manager';
+					$typeid = $arr['manager'];
 					break;
 			}
 
@@ -79,16 +123,18 @@ class Account extends Auth_Controller {
 
 			$relationArr['type'] = $type;
 			$relationArr['leve'] = $groupid;
-			$relationArr['tyepid'] = $tyepId;
+			$relationArr['typeid'] = $typeid;
 
             $data['username'] = $arr['phone'];
             $data['password'] = md5(substr($arr['idcard'], -6));
             $data['last_login_time'] = time();      //创建时间
             $data['last_login_ip'] = '0.0.0.0';
             $data['idcard'] = $arr['idcard'];
-            $data['avatar'] = $arr['imagesList'];
+            $data['idphoto'] = $arr['imagesList'];
             $data['phone'] = $arr['phone'];
             $data['nickname'] = $arr['nickname'];
+            $data['work_status'] = $arr['work_status'];
+            $data['mark'] = $arr['mark'];
 
             $this->db->trans_begin();//事务开始
             $this->db->insert('user', $data);
@@ -174,8 +220,26 @@ class Account extends Auth_Controller {
 		            $storeDefult = $stores ? $stores[0]['id'] : '';
 					$array['storeDefult'] = array_key_exists('storeDefult',$arr) ? $arr['storeDefult'] : $storeDefult;
 					break;
-				default:
-
+				case '6':
+					//销售顾问
+		            $provinces = $this->db->get_where('provinces', array('largeid'=>$array['largeDefult']))->result_array();
+		            $array['provinces'] = $provinces;
+		            $array['provinceDefault'] = array_key_exists('provinceDefault',$arr) ? $arr['provinceDefault'] : $provinces[0]['provinceid'];
+		            $citys = $this->db->get_where('cities', array('provinceid'=>$array['provinceDefault']))->result_array();
+		            $array['citys'] = $citys;
+		            $array['cityDefault'] = array_key_exists('cityDefault',$arr) ? $arr['cityDefault'] : $citys[0]['cityid'];
+		            $areas = $this->db->get_where('custom_area', array('cityid'=>$array['cityDefault']))->result_array();
+		            $array['areas'] = $areas;
+		            $areaDefult = $areas ? $areas[0]['id'] : '';
+		            $array['areaDefult'] = array_key_exists('areaDefult',$arr) ? $arr['areaDefult'] : $areaDefult;
+		            $stores = $this->db->get_where('store', array('custom_area_id'=>$array['areaDefult']))->result_array();
+		            $array['stores'] = $stores;
+		            $storeDefult = $stores ? $stores[0]['id'] : '';
+					$array['storeDefult'] = array_key_exists('storeDefult',$arr) ? $arr['storeDefult'] : $storeDefult;
+					$managers = $this->db->select('u.id,u.nickname')->from('user as u')->join('userleverelation as relation', 'u.id = relation.uid')->where(array('relation.leve'=>'5','type'=>'store','typeid'=>$array['storeDefult']))->get()->result_array();
+					$managerDefult = $managers ? $managers[0]['id'] : '';
+					$array['managers'] = $managers;
+					$array['managerDefult'] = array_key_exists('managerDefult',$arr) ? $arr['managerDefult'] : $storeDefult;
 					break;
 			}
 

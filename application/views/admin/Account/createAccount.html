@@ -149,6 +149,19 @@
                                 } 
                                 selectStr+='</select></div>';
                             }
+
+                            if(typeof(data.data['managers']) !="undefined" && data.data['managers']!=""){
+                                selectStr+= '<div class="form-group padding-right store"><label>店经理：</label><select  class="form-control" id="manager" name="manager">';
+                                for(var key in data.data['managers']){
+                                    if(data.data['managerDefult'] == data.data['managers'][key].id){
+                                        selectStr+="<option value='"+data.data['managers'][key].id+"' selected>"+data.data['managers'][key].nickname+"</option>";
+                                    }else{
+                                        selectStr+="<option value='"+data.data['managers'][key].id+"'>"+data.data['managers'][key].nickname+"</option>";
+                                    }
+                                } 
+                                selectStr+='</select></div>';
+                            }
+
                             $('#linkAge').html(selectStr);
                         }
                  }})
