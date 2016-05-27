@@ -40,6 +40,72 @@ class Account extends Auth_Controller {
 	}
 
 	/**
+	 * 编辑账号
+	 */
+	public function editAccount(){
+		$id = $this->uri->segment(4);
+		$data = $this->db->get_where('userleverelation', array('uid'=>$id))->row_array();
+		$arr = array();
+		switch ($data['leve']) {
+			case '1':
+				$arr['largeDefult'] = $data['typeid'];
+				$arr['managerDefult'] = '';
+				$arr['storeDefult'] = '';
+				$arr['cityDefault'] = '';
+				$arr['provinceDefault'] = '';
+				$arr['areaDefult'] = '';
+				break;
+			case '2':
+				$arr['managerDefult'] = '';
+				$arr['storeDefult'] = '';
+				$arr['areaDefult'] = '';
+				$city = $this->db->get_where('cities', array('cityid'=>$data['typeid']))->row_array();
+				$provinces = $this->db->get_where('provinces', array('provinceid'=>$city['provinceid']))->row_array();
+				$arr['cityDefault'] = $data['typeid'];
+				$arr['provinceDefault'] = $city['provinceid'];
+				$arr['largeDefult'] = $provinces['largeid'];
+				break;
+			case '3':
+				//区域经理
+				$arr['managerDefult'] = '';
+				$arr['storeDefult'] = '';
+				$arr['areaDefult'] = $data['typeid'];
+				$custonArea = $this->db->get_where('custom_area', array('id'=>$arr['areaDefult']))->row_array();
+				$arr['cityDefault'] = $custonArea['cityid'];
+				$arr['provinceDefault'] = $custonArea['provinceid'];
+				$arr['largeDefult'] = $custonArea['largeid'];
+				break;
+			case '4':
+			case '5':
+				//店经理
+				$arr['storeDefult'] = $data['typeid'];
+				$areaData = $this->db->get_where('store', array('id'=>$arr['storeDefult']))->row_array();
+				$arr['areaDefult'] = $areaData['custom_area_id'];
+				$custonArea = $this->db->get_where('custom_area', array('id'=>$arr['areaDefult']))->row_array();
+				$arr['cityDefault'] = $custonArea['cityid'];
+				$arr['provinceDefault'] = $custonArea['provinceid'];
+				$arr['largeDefult'] = $custonArea['largeid'];
+				$arr['managerDefult'] = '';
+				break;
+			case '6':
+				//销售顾问
+				$arr['managerDefult'] = $data['typeid'];
+				$storeData = $this->db->get_where('userleverelation', array('uid'=>$data['typeid'],'leve'=>'5'))->row_array();
+				$arr['storeDefult'] = $storeData['typeid'];
+				$areaData = $this->db->get_where('store', array('id'=>$arr['storeDefult']))->row_array();
+				$arr['areaDefult'] = $areaData['custom_area_id'];
+				$custonArea = $this->db->get_where('custom_area', array('id'=>$arr['areaDefult']))->row_array();
+				$arr['cityDefault'] = $custonArea['cityid'];
+				$arr['provinceDefault'] = $custonArea['provinceid'];
+				$arr['largeDefult'] = $custonArea['largeid'];
+				break;
+		}
+		$arr['leve'] = $data['leve'];
+		$arr['uid'] = $id;
+		$this->load->view('admin/Account/editAccount.html',$arr);
+	}
+
+	/**
 	 * 添加账号第一步
 	 */
 	public function createAccountStep(){
@@ -164,6 +230,135 @@ class Account extends Auth_Controller {
 			$arr = $this->input->get();
 			$data['data'] = json_encode($arr);
 			$this->load->view('admin/Account/createAccountStep.html',$data);
+		}
+	}
+
+	/**
+	 * 编辑账号第一步
+	 */
+	public function createAccountStepEdit(){
+		if($this->input->is_ajax_request()){
+			$arr = $this->input->post();
+			if(!isset($arr['imagesList'])){
+				$this->response_data('error','请上传照片');
+			}
+			if(!isset($arr['groupid'])){
+				$this->response_data('error','参数不正确');
+			}
+			$groupid = intval($arr['groupid']);
+			$type = "";
+			$typeid = "";
+			$relationArr = array();
+			switch ($groupid) {
+				case 1://大区经理
+					if(!isset($arr['large'])){
+						$this->response_data('error','请选择大区');
+					}
+					$type = 'large';
+					$typeid = $arr['large'];
+					$largeData = $this->db->get_where('userleverelation', array('type'=>'large','typeid'=>$typeid,'uid !='=>$arr['uid']))->row_array();
+					if($largeData){
+						$this->response_data('error','该大区经理角色已经存在');
+					}
+					break;
+				case 2://城市经理
+					if(!isset($arr['city'])){
+						$this->response_data('error','请选择城市');
+					}
+					$type = 'city';
+					$typeid = $arr['city'];
+					$cityData = $this->db->get_where('userleverelation', array('type'=>'city','typeid'=>$typeid,'uid !='=>$arr['uid']))->row_array();
+					if($cityData){
+						$this->response_data('error','该城市经理角色已经存在');
+					}
+					break;
+				case 3://区域经理
+					if(!isset($arr['area'])){
+						$this->response_data('error','请选择区域');
+					}
+					$type = 'area';
+					$typeid = $arr['area'];
+					$cityData = $this->db->get_where('userleverelation', array('type'=>'area','typeid'=>$typeid,'uid !='=>$arr['uid']))->row_array();
+					if($cityData){
+						$this->response_data('error','该区域经理角色已经存在');
+					}
+					break;
+				case 4://店秘
+					if(!isset($arr['store'])){
+						$this->response_data('error','请选择门店');
+					}
+					$type = 'store';
+					$typeid = $arr['store'];
+					$storeSecretary = $this->db->get_where('userleverelation', array('type'=>'store','typeid'=>$typeid,'leve'=>'4','uid !='=>$arr['uid']))->row_array();
+					if($storeSecretary){
+						$this->response_data('error','该店店秘角色已经存在');
+					}
+					break;
+				case 5://店经理
+					if(!isset($arr['store'])){
+						$this->response_data('error','请选择门店');
+					}
+					$type = 'store';
+					$typeid = $arr['store'];
+					break;
+				case 6://销售顾问
+					if(!isset($arr['manager'])){
+						$this->response_data('error','请选择门店经理');
+					}
+
+					$type = 'manager';
+					$typeid = $arr['manager'];
+					break;
+			}
+
+			if($this->db->get_where('user', array('username'=>$arr['phone'],'id !='=>$arr['uid']))->row_array()){
+				$this->response_data('error','该手机号已经被注册');
+			}
+
+			$relationArr['type'] = $type;
+			$relationArr['leve'] = $groupid;
+			$relationArr['typeid'] = $typeid;
+
+            $data['username'] = $arr['phone'];
+            $data['password'] = md5(substr($arr['idcard'], -6));
+            $data['last_login_time'] = time();      //创建时间
+            $data['last_login_ip'] = '0.0.0.0';
+            $data['idcard'] = $arr['idcard'];
+            $data['idphoto'] = $arr['imagesList'];
+            $data['phone'] = $arr['phone'];
+            $data['nickname'] = $arr['nickname'];
+            $data['work_status'] = $arr['work_status'];
+            $data['mark'] = $arr['mark'];
+
+            $this->db->trans_begin();//事务开始
+            $this->db->update('user', $data,array('id'=>$arr['uid']));
+            // $uid = $this->db->insert_id();
+            $relationArr['uid'] = $arr['uid'];
+            $this->db->update('userleverelation', $relationArr,array('uid'=>$arr['uid']));
+            $group = $this->db->get_where('auth_group', array('leve'=>$relationArr['leve']))->row_array();//根据级别查询组
+            $group_id = $group['id'];//得到权限组ID，注上面变量的 $groupid 为级别id
+            $result['uid'] = $arr['uid'];
+            $result['group_id'] = $group_id; //用户组ID
+            $this->db->update('auth_group_access', $result,array('uid'=>$arr['uid']));
+            if ($this->db->trans_status() === FALSE)
+			{
+			    $this->db->trans_rollback();
+			    $this->response_data('error','账号编辑失败');
+			}
+			else
+			{
+			    $this->db->trans_commit();
+			    $this->response_data('success','账号编辑成功');
+			}
+
+
+
+		}else{
+			$arr = $this->input->get();
+			$userData = $this->db->get_where('user', array('id'=>$arr['uid']))->row_array();
+			$data['data'] = json_encode($arr);
+			$data['userData'] = $userData;
+			$this->load->view('admin/Account/createAccountStepEdit.html',$data);
 		}
 	}
 

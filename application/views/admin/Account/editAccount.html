@@ -34,7 +34,8 @@
                     <?php
                         $leves = $this->config->item('leve');
                     ?>
-                    <form method="GET"  id="form-store-add" action="<?php echo site_url('admin/Account/createAccountStep') ?>">
+                    <form method="GET"  id="form-store-add" action="<?php echo site_url('admin/Account/createAccountStepEdit') ?>">
+                        <input type="hidden" value="<?php echo $uid; ?>" name="uid">
                         <div class="form-group row">
                             <div class="col-sm-1">
                             <label>用户组设置：</label>
@@ -53,7 +54,7 @@
                             <div class="hr-line-dashed"></div>
                             <div class="form-group">
                                 <div class="col-sm-4 col-sm-offset-2">
-                                    <button type="submit" class="btn btn-primary">添加账户</button>
+                                    <button type="submit" class="btn btn-primary">编辑账户</button>
                                     <a class="btn btn-white" href="<?php echo site_url('admin/Account/createAccount') ?>">取消</a>
                                 </div>
                             </div>
@@ -69,8 +70,18 @@
         window.onload = function(){
 
             var arr = {}; 
-            arr['groupid'] = 1;
-            getLarge(arr);
+            var arrs = {}; 
+            var leve = parseInt("<?php echo $leve;?>");
+
+            arrs['groupid'] = leve;
+            $("#group-setting").find("option[value='"+leve+"']").attr("selected",true);
+            arrs['managerDefult'] = "<?php echo $managerDefult;?>";
+            arrs['storeDefult'] = "<?php echo $storeDefult;?>";
+            arrs['areaDefult'] = "<?php echo $areaDefult;?>";
+            arrs['cityDefault'] = "<?php echo $cityDefault;?>";
+            arrs['provinceDefault'] = "<?php echo $provinceDefault;?>";
+            arrs['largeDefult'] = "<?php echo $largeDefult;?>";
+            getLarge(arrs);
 
             $('#group-setting').change(function(){
                 v = $(this).val();
@@ -226,8 +237,7 @@
                     getLarge(arr);
                 }
             });
-
-
+            
             //门店change
             $('body').on('change','#store',function(){
                 groupid = parseInt($('#group-setting').val());
@@ -247,6 +257,7 @@
                     getLarge(arr);
                 }
             });
+
 
 
         }
