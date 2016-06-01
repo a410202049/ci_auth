@@ -39,8 +39,6 @@ class Index extends Base_Controller {
 			redirect(base_url('admin/Index'));
 		}
 		$this->session->set_userdata('aid',$userData['id']);
-		
-
 		$this->db->update('user', array('last_login_time'=>time(),'last_login_ip'=>$this->input->ip_address()), array('id'=>$userData['id']));
 		redirect(base_url('admin/Main'));
 	}

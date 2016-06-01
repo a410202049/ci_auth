@@ -22,7 +22,7 @@ class Account extends Auth_Controller {
 		$page_config['total']= $count;
 		$this->mypage_class->initialize($page_config);
 
-		$data = $this->db->select('u.id,u.username,group.title,u.last_login_ip,u.status,u.last_login_time,u.mark,u.work_status')->from('user as u')->join('auth_group_access as access', 'u.id = access.uid')->join('auth_group as group','group.id = access.group_id')->where(array('group.role'=>'2'))->limit($page_config['perpage'],$page_config['perpage'] * ($page_config['nowindex'] - 1))->order_by('id','desc')->get()->result_array();
+		$data = $this->db->select('u.id,u.username,u.nickname,group.title,u.last_login_ip,u.status,u.last_login_time,u.mark,u.work_status')->from('user as u')->join('auth_group_access as access', 'u.id = access.uid')->join('auth_group as group','group.id = access.group_id')->where(array('group.role'=>'2'))->limit($page_config['perpage'],$page_config['perpage'] * ($page_config['nowindex'] - 1))->order_by('id','desc')->get()->result_array();
 		
 		foreach ($data as $key => $value) {
 			$data[$key]['work_status'] = $value['work_status'] =='1' ? "在职" : "离职";
@@ -381,7 +381,8 @@ class Account extends Auth_Controller {
 		            $array['provinceDefault'] = array_key_exists('provinceDefault',$arr) ? $arr['provinceDefault'] : $provinces[0]['provinceid'];
 		            $citys = $this->db->get_where('cities', array('provinceid'=>$array['provinceDefault']))->result_array();
 		            $array['citys'] = $citys;
-		            $array['cityDefault'] = array_key_exists('cityDefault',$arr) ? $arr['cityDefault'] : $citys[0]['cityid'];
+		            $cityDefault = $citys ? $citys[0]['cityid']: '';
+		            $array['cityDefault'] = array_key_exists('cityDefault',$arr) ? $arr['cityDefault'] : $cityDefault;
 		            //这里如果没有传入大区，省份，城市。
 					break;
 				case '3':
@@ -391,7 +392,8 @@ class Account extends Auth_Controller {
 		            $array['provinceDefault'] = array_key_exists('provinceDefault',$arr) ? $arr['provinceDefault'] : $provinces[0]['provinceid'];
 		            $citys = $this->db->get_where('cities', array('provinceid'=>$array['provinceDefault']))->result_array();
 		            $array['citys'] = $citys;
-		            $array['cityDefault'] = array_key_exists('cityDefault',$arr) ? $arr['cityDefault'] : $citys[0]['cityid'];
+		            $cityDefault = $citys ? $citys[0]['cityid']: '';
+		            $array['cityDefault'] = array_key_exists('cityDefault',$arr) ? $arr['cityDefault'] : $cityDefault;
 		            $areas = $this->db->get_where('custom_area', array('cityid'=>$array['cityDefault']))->result_array();
 		            $array['areas'] = $areas;
 		            $areaDefult = $areas ? $areas[0]['id'] : '';
@@ -405,7 +407,8 @@ class Account extends Auth_Controller {
 		            $array['provinceDefault'] = array_key_exists('provinceDefault',$arr) ? $arr['provinceDefault'] : $provinces[0]['provinceid'];
 		            $citys = $this->db->get_where('cities', array('provinceid'=>$array['provinceDefault']))->result_array();
 		            $array['citys'] = $citys;
-		            $array['cityDefault'] = array_key_exists('cityDefault',$arr) ? $arr['cityDefault'] : $citys[0]['cityid'];
+		            $cityDefault = $citys ? $citys[0]['cityid']: '';
+		            $array['cityDefault'] = array_key_exists('cityDefault',$arr) ? $arr['cityDefault'] : $cityDefault;
 		            $areas = $this->db->get_where('custom_area', array('cityid'=>$array['cityDefault']))->result_array();
 		            $array['areas'] = $areas;
 		            $areaDefult = $areas ? $areas[0]['id'] : '';
@@ -422,7 +425,8 @@ class Account extends Auth_Controller {
 		            $array['provinceDefault'] = array_key_exists('provinceDefault',$arr) ? $arr['provinceDefault'] : $provinces[0]['provinceid'];
 		            $citys = $this->db->get_where('cities', array('provinceid'=>$array['provinceDefault']))->result_array();
 		            $array['citys'] = $citys;
-		            $array['cityDefault'] = array_key_exists('cityDefault',$arr) ? $arr['cityDefault'] : $citys[0]['cityid'];
+		            $cityDefault = $citys ? $citys[0]['cityid']: '';
+		            $array['cityDefault'] = array_key_exists('cityDefault',$arr) ? $arr['cityDefault'] : $cityDefault;
 		            $areas = $this->db->get_where('custom_area', array('cityid'=>$array['cityDefault']))->result_array();
 		            $array['areas'] = $areas;
 		            $areaDefult = $areas ? $areas[0]['id'] : '';
