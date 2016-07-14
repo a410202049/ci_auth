@@ -13,7 +13,7 @@ class AuthMenu extends Auth_Controller {
         	$rules[$key]['name'] = $value['title'];
         	$rules[$key]['title'] = $value['name'];
         	$rules[$key]['isshow'] = $value['isshow']?'√':'×';
-        	$rules[$key]['create_time'] = date('Y-m-d H:i:s', $value['create_time']);    
+        	$rules[$key]['create_time'] = date('Y-m-d H:i:s', $value['create_time']);
         }
         $this->load->library('tree');
         $this->tree->icon = array('&nbsp;&nbsp;&nbsp;','&nbsp;&nbsp;&nbsp;├─ ','&nbsp;&nbsp;&nbsp;└─ ');
@@ -28,7 +28,7 @@ class AuthMenu extends Auth_Controller {
                     <td>\$title</td>
                     <td><font color='red'>\$isshow</font></td>
                     <td>\$create_time</td>
-                    <td><a class='option del-menu' data-val='\$id'>删除</a></td>
+                    <td><a class='option edit-menu' data-val='\$id'>编辑</a>|<a class='option del-menu' data-val='\$id'>删除</a></td>
                 </tr>";
         $this->tree->init($rules);
         $tr = $this->tree->get_tree(0, $tdStr);
@@ -40,11 +40,12 @@ class AuthMenu extends Auth_Controller {
 
     public function addMenu(){
         if($this->input->is_ajax_request()){
-            $title = $this->input->post('title');
+            $title = trim($this->input->post('title'));
+            $pid = $this->input->post('pid');
             if(!$title){
                 $this->response_data('error','菜单名称不能为空');
             }
-            $data = $this->db->get_where('auth_rule', array('title'=>$title))->row_array();
+            $data = $this->db->get_where('auth_rule', array('title'=>$title,'pid'=>$pid))->row_array();
             if($data){
                 $this->response_data('error','菜单名称已经存在');
             }
@@ -57,6 +58,53 @@ class AuthMenu extends Auth_Controller {
         }
     }
 
+    /**
+     * 获取不包含本身菜单的层级
+     */
+    public function ajaxGetMenu(){
+        if($this->input->is_ajax_request()){
+           $mid = trim($this->input->post('id'));
+            $rules = $this->db->select('title,name,pid,id,create_time,isshow,sort')->order_by('sort', 'asc')->get_where('auth_rule',array('id!='=>$mid))->result_array();
+            foreach ($rules as $key => $value) {
+                $rules[$key]['order'] = $value['sort'];
+                $rules[$key]['parentid']= $value['pid'];
+                $rules[$key]['name'] = $value['title'];
+                $rules[$key]['title'] = $value['name'];
+                $rules[$key]['isshow'] = $value['isshow']?'√':'×';
+                $rules[$key]['create_time'] = date('Y-m-d H:i:s', $value['create_time']);
+            }
+            $this->load->library('tree');
+            $this->tree->icon = array('&nbsp;&nbsp;&nbsp;','&nbsp;&nbsp;&nbsp;├─ ','&nbsp;&nbsp;&nbsp;└─ ');
+            $this->tree->nbsp = '&nbsp;&nbsp;&nbsp;';
+            $this->tree->init($rules);
+            $str = "<option value=\$id >\$spacer\$name</option>";
+            $menus = $this->tree->get_tree(0,$str,1);
+            $arr['menus'] = '<option value="0">--顶级菜单--</option>'.$menus;
+            $info = $this->db->select('id,pid,isshow,title')->get_where('auth_rule',array('id='=>$mid))->row_array();
+            $arr['info'] = $info;
+            $this->response_data('success','获取成功',$arr);
+
+        }
+    }
+
+    /**
+     * 编辑保存菜单
+     */
+
+    public function saveMenu(){
+        if($this->input->is_ajax_request()){
+            $id = $this->input->post('id');
+            $is_show = $this->input->post('is_show');
+            $pid = $this->input->post('pid');
+            $menu_title = $this->input->post('menu_title');
+            if(empty($menu_title)){
+                $this->response_data('error','菜单名称不能为空');
+            }
+            $this->db->update('auth_rule', array('title'=>$menu_title,'isshow'=>$is_show,'pid'=>$pid), array('id'=>$id));
+            $this->response_data('success','菜单编辑成功');
+        }
+    }
+
     public function delMenu(){
         if($this->input->is_ajax_request()){
             $id = $this->input->post('id');
@@ -66,7 +114,7 @@ class AuthMenu extends Auth_Controller {
             }else{
                 $this->db->delete('auth_rule', array('id'=>$id));
                 $this->response_data('success','删除成功');
-            } 
+            }
         }
 
     }
@@ -111,14 +159,14 @@ class AuthMenu extends Auth_Controller {
      * 管理员列表
      */
     public function adminList(){
-        $admins = $this->db->select('u.id,u.username,group.title,u.last_login_ip,u.status,u.last_login_time')->from('user as u')->join('auth_group_access as access', 'u.id = access.uid')->join('auth_group as group','group.id = access.group_id')->where(array('group.role'=>'1'))->get()->result_array();
+        $admins = $this->db->select('u.id,u.username,group.title,u.last_login_ip,u.status,u.last_login_time')->from('user as u')->join('auth_group_access as access', 'u.id = access.uid')->join('auth_group as group','group.id = access.group_id')->get()->result_array();
         foreach ($admins as $key => $value) {
             $group = $this->auth->getGroups($value['id']);
             $admins[$key]['last_login_time'] = date('Y-m-d H:i:s',$value['last_login_time']);
             $admins[$key]['status'] = $value['status'] ? '启用' : '禁用';
             $admins[$key]['disable'] = $value['status'] ? '禁用' : '启用';
         }
-        $groups = $this->db->where(array('role'=>'1'))->get('auth_group')->result_array();
+        $groups = $this->db->get('auth_group')->result_array();
         $arr['admins'] = $admins;
         $arr['groups'] = $groups;
         $this->load->view('admin/AuthMenu/adminList.html',$arr);
@@ -193,13 +241,7 @@ class AuthMenu extends Auth_Controller {
                 $this->response_data('error','用户组已经存在');
             }
             $data['title'] = $arr['title'];
-            $data['role'] = $arr['role'];
-            if($arr['role'] =='2'){
-                $data['leve'] = $arr['leve'];
-                if($this->db->get_where('auth_group', array('leve'=>$arr['leve']))->row_array()){
-                    $this->response_data('error','该权限的业务员用户组已经存在');
-                }
-            }
+
             $data['rules'] = implode(',', $arr['rule']);
             $data['create_time'] = time();
 
@@ -244,12 +286,7 @@ class AuthMenu extends Auth_Controller {
                 $this->response_data('error','权限不能为空');
             }
             $id = $arr['id'];
-            // $data['id'] = $id;
             $data['title'] = $arr['title'];
-            $data['role'] = $arr['role'];
-            if($arr['role'] =='2'){
-                $data['leve'] = $arr['leve'];
-            }
             $data['rules'] = implode(',', $arr['rule']);
             if($this->db->update('auth_group',$data,array('id'=>$id))){
                 $this->response_data('success','用户组编辑成功');

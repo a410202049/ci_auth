@@ -24,22 +24,6 @@
                                 <input type="text" class="form-control" name="title" value="<?php echo $authData['title'];?>">
                                 <span class="help-block m-b-none">操作栏目/中文名</span>
                             </div>
-                           <div class="col-sm-1">
-                                <select id="role" name="role" class="form-control m-b valid">
-                                    <option value="1" <?php if('1' == $authData['role']){ echo "selected";}?>>管理员</option>
-                                    <option value="2" <?php if('2' == $authData['role']){ echo "selected";}?>>业务员</option>
-                                </select>
-                            </div>
-                            <?php
-                                $leves = $this->config->item('leve');
-                            ?>
-                            <div class="col-sm-2">
-                                <select id="leve" name="leve" class="form-control m-b valid" <?php if(!$authData['leve']){?>style="display: none;"<?php }?>>
-                                    <?php foreach ($leves as $key => $value): ?>
-                                        <option value="<?php echo $key;?>" <?php if($key == $authData['leve']){ echo "selected";}?>><?php echo $value;?></option>
-                                    <?php endforeach; ?> 
-                                </select>
-                            </div>
                         </div>
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
@@ -52,7 +36,7 @@
                         </div>
                         <div class="form-group">
                             <div class="col-sm-4 col-sm-offset-2">
-                                <button type="submit" class="btn btn-primary edit-group">保存用户组</button>
+                                <button type="submit" class="btn btn-primary edit-group">保存</button>
                                 <a class="btn btn-white" href="/admin/AuthMenu/groupList">取消</a>
                             </div>
                         </div>

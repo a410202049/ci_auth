@@ -81,7 +81,7 @@ class Auth_Controller extends Base_Controller{
         }
         $this->load->library('auth');
         $this->uid = $this->isLogin();
-        $this->groupid = $this->auth->getGroups($this->uid)[0]['group_id'];
+        // $this->groupid = $this->auth->getGroups($this->uid)[0]['group_id'];
 
         if(!$this->auth->check($this->router->fetch_class().'/'.$this->router->fetch_method(),$this->uid) && $this->uid !=1 && $this->groupid !=1){
             if($this->input->is_ajax_request()){

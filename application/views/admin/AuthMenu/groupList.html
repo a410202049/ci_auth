@@ -31,13 +31,9 @@
                                             <td><?php echo $group['id'];?></td>
                                             <td><?php echo $group['title'];?></td>
                                             <td><?php echo date('Y-m-d H:i:s',$group['create_time']);?></td>
-                                            <?php if($group['id'] == '1'){?>
-                                                <td><a class="option disable-option" href="javascript:void(0)">授权/编辑</a>|<a class="option disable-option" data-id="<?php echo $group['id'];?>">删除</a></td>
-                                                <?php }else{ ?>
-                                                <td><a class="option" href="<?php echo base_url('admin/AuthMenu/editGroup').'/'.$group['id'];?>">授权/编辑</a>|<a class="option del-group" data-id="<?php echo $group['id'];?>">删除</a></td>
-                                            <?php }?>
+                                            <td><a class="option" href="<?php echo base_url('admin/AuthMenu/editGroup').'/'.$group['id'];?>">授权/编辑</a>|<a class="option del-group" data-id="<?php echo $group['id'];?>">删除</a></td>
                                         </tr>
-                                <?php endforeach; ?>                         
+                                <?php endforeach; ?>
                             </tbody>
                         </table>
                     </div>
@@ -72,12 +68,12 @@
                             }
                         }
                     })
-                
-                }) 
+
+                })
             }
-        } 
+        }
     </script>
-<?php $this->load->view('admin/Common/footer.html');?>          
+<?php $this->load->view('admin/Common/footer.html');?>
 
 
 
