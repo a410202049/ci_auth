@@ -6525,3 +6525,10 @@ a.pg_next{
     padding:2px;
     margin:0 5px;
 }
+.form-group.padding-right{
+  margin-bottom: 15px;
+}
+
+#addMenu {
+    vertical-align: top;
+}
