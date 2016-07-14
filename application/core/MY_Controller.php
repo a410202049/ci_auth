@@ -67,6 +67,38 @@ class Base_Controller extends CI_Controller {
         exit;
     }
 
+    /**
+     * 分页函数
+     */
+    function page($array){
+        $perpage = isset($array['perpage']) ? $array['perpage'] : '15';
+        $part = isset($array['part']) ? $array['part'] : '2';
+        $url = isset($array['url']) ? $array['url'] : '';
+        $seg = isset($array['seg']) ? $array['seg'] : '4';
+        $tableName = isset($array['tableName']) ? $array['tableName'] : '';
+        $where = isset($array['where']) ? $array['where'] : '1=1';
+        $page_config['perpage']=$perpage;   //每页条数
+        $page_config['part']=$part;//当前页前后链接数量
+        $page_config['url']=$url;//url
+        $page_config['seg']=$seg;//参数取 index.php之后的段数，默认为3，即index.php/control/function/18 这种形式
+        $page_config['nowindex']=$this->uri->segment($page_config['seg']) ? $this->uri->segment($page_config['seg']):1;//当前页
+        $this->load->library('mypage_class');
+        if(isset($array['query'])){
+            $query = $this->db->query($array['query']);
+            $page_config['total'] = count($query->result_array());
+        }else{
+            $page_config['total'] = $this->db->where($where)->count_all_results($tableName);
+        }
+        $this->mypage_class->initialize($page_config);
+        $this->db->limit($page_config['perpage'],$page_config['perpage'] * ($page_config['nowindex'] - 1));
+        if(isset($array['query'])){
+            $data = $this->db->query($array['query'].' LIMIT '.$page_config['perpage'] * ($page_config['nowindex'] - 1).','.$page_config['perpage'])->result_array();
+        }else{
+            $data = $this->db->order_by('id','desc')->get_where($tableName,$where)->result_array();
+        }
+        return $data;
+    }
+
 }
 
 class Auth_Controller extends Base_Controller{

@@ -224,7 +224,9 @@ class Mypage_class {
     */
     function _get_url($pagenum=1)
     {
-        return $this->url.'/'.$pagenum;
+        $param = http_build_query(array_filter($_GET));
+        $urlStr = empty($param) ? '' : '?'.$param;
+        return $this->url.'/'.$pagenum.$urlStr;
     }
   
     /**
