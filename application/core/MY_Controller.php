@@ -5,7 +5,7 @@ class Base_Controller extends CI_Controller {
 
 
     public function __construct()
-    {
+    {   
         parent::__construct();
     }
 
@@ -158,9 +158,11 @@ class Auth_Controller extends Base_Controller{
             $group = $this->auth->getGroups($this->uid);
             $userData['groupname'] = $group ? $group[0]['title'] :'没有用户组';
             $userData['address'] = $this->location->getlocation($userData['last_login_ip']);
+            $siteSeting = $this->db->get('site_seting')->row_array();
 
             $arr['userinfo'] = $userData;
             $arr['dataMenu'] = $data;
+            $arr['siteSeting'] = $siteSeting;
             $this->load->view('admin/Common/header.html',$arr);
         }
 
