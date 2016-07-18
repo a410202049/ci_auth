@@ -101,7 +101,23 @@ class Article extends Auth_Controller {
      * @return [type] [description]
      */
     public function articleList(){
-        $arr['articles'] = array();
+        $array['url'] = 'admin/Article/articleList';
+        $array['tableName'] = 'article';
+        $cid = $this->input->get('cid');
+        $cid = isset($cid) ? $cid : 'all';
+        if($cid != 'all'){
+           $array['where']  = array('cat_id'=>$cid,'is_del'=>'0');
+        }else{
+             $array['where'] = array('is_del'=>'0');
+        }
+        
+        $articles = $this->page($array);
+        foreach ($articles as $key => $value) {
+            $category = $this->db->get_where('article_category',array('id'=>$value['cat_id']))->row_array();
+            $articles[$key]['categoryName'] = $category['cat_name'];
+            $articles[$key]['isshow'] = $value['is_show'] ? '已发布' : '未发布';
+        }
+        $arr['articles'] = $articles;
         $rules = $this->db->order_by('sort', 'asc')->get('article_category')->result_array();
         foreach ($rules as $key => $value) {
             $rules[$key]['order'] = $value['sort'];
@@ -120,6 +136,7 @@ class Article extends Auth_Controller {
         $str = "<option value=\$id >\$spacer\$cat_name</option>";
         $categorys = $this->tree->get_tree(0,$str,1);
         $arr['categorys'] = $categorys;
+        $arr['cid'] = $cid;
         $this->load->view('admin/Article/articleList.html',$arr);
     }
 
@@ -130,9 +147,116 @@ class Article extends Auth_Controller {
 
     public function addArticle(){
         if(IS_AJAX){
-            echo "1";
+            $arr = $this->input->post();
+            $image = isset($arr['imagesList']) ? $arr['imagesList'] : '';
+            $arr['image'] = $image;
+            $arr['content'] = htmlspecialchars($arr['content']);
+            $arr['content_en'] = htmlspecialchars($arr['content_en']);
+            $arr['keywords'] = emptyreplace($arr['keywords']);
+            $arr['keywords_en'] = emptyreplace($arr['keywords_en']);
+            $arr['sort'] = '50';
+            $arr['add_time'] = time();
+            unset($arr['imagesList']);
+            $this->db->insert('article', $arr);
+            $this->response_data('success','文章添加成功');
         }else{
-             $this->load->view('admin/Article/addArticle.html');
+            $rules = $this->db->order_by('sort', 'asc')->get('article_category')->result_array();
+            foreach ($rules as $key => $value) {
+                $rules[$key]['order'] = $value['sort'];
+                $rules[$key]['parentid']= $value['parent_id'];
+                $rules[$key]['cat_name'] = $value['cat_name'];
+                $rules[$key]['cat_name_en'] = $value['cat_name_en'];
+                $rules[$key]['keywords'] = $value['keywords'];
+                $rules[$key]['keywords_en'] = $value['keywords_en'];
+                $rules[$key]['description'] = $value['description'];
+                $rules[$key]['description_en'] = $value['description_en'];
+            }
+            $this->load->library('tree');
+            $this->tree->icon = array('&nbsp;&nbsp;&nbsp;','&nbsp;&nbsp;&nbsp;├─ ','&nbsp;&nbsp;&nbsp;└─ ');
+            $this->tree->nbsp = '&nbsp;&nbsp;&nbsp;';
+            $this->tree->init($rules);
+            $str = "<option value=\$id >\$spacer\$cat_name</option>";
+            $categorys = $this->tree->get_tree(0,$str,1);
+            $arr['categorys'] = $categorys;
+            $this->load->view('admin/Article/addArticle.html',$arr);
+        }
+    }
+
+
+    /**
+     * 编辑文章
+     */
+
+    public function editArticle(){
+        if(IS_AJAX){
+            $arr = $this->input->post();
+            $image = isset($arr['imagesList']) ? $arr['imagesList'] : '';
+            $arr['image'] = $image;
+            $arr['content'] = htmlspecialchars($arr['content']);
+            $arr['content_en'] = htmlspecialchars($arr['content_en']);
+            $arr['keywords'] = emptyreplace($arr['keywords']);
+            $arr['keywords_en'] = emptyreplace($arr['keywords_en']);
+            $arr['sort'] = '50';
+            $arr['add_time'] = time();
+            unset($arr['imagesList']);
+            $id = $arr['id'];
+            unset($arr['id']);
+            $this->db->update('article',$arr, array('id'=>$id));
+            $this->response_data('success','文章编辑成功');
+        }else{
+            $rules = $this->db->order_by('sort', 'asc')->get('article_category')->result_array();
+            foreach ($rules as $key => $value) {
+                $rules[$key]['order'] = $value['sort'];
+                $rules[$key]['parentid']= $value['parent_id'];
+                $rules[$key]['cat_name'] = $value['cat_name'];
+                $rules[$key]['cat_name_en'] = $value['cat_name_en'];
+                $rules[$key]['keywords'] = $value['keywords'];
+                $rules[$key]['keywords_en'] = $value['keywords_en'];
+                $rules[$key]['description'] = $value['description'];
+                $rules[$key]['description_en'] = $value['description_en'];
+            }
+            $this->load->library('tree');
+            $this->tree->icon = array('&nbsp;&nbsp;&nbsp;','&nbsp;&nbsp;&nbsp;├─ ','&nbsp;&nbsp;&nbsp;└─ ');
+            $this->tree->nbsp = '&nbsp;&nbsp;&nbsp;';
+            $this->tree->init($rules);
+            $str = "<option value=\$id >\$spacer\$cat_name</option>";
+            $categorys = $this->tree->get_tree(0,$str,1);
+            $arr['categorys'] = $categorys;
+            $id = $this->uri->segment('5');
+            $result = $this->db->get_where('article',array('id'=>$id))->row_array();
+            $arr['result'] = $result;
+            $this->load->view('admin/Article/editArticle.html',$arr);
+        }
+    }
+
+
+    /**
+     * [isshow_article 是否发布文章]
+     */
+    public function isshow_article(){
+        if(IS_AJAX){
+            $id = $this->input->post('id');
+            $result = $this->db->get_where('article',array('id'=>$id))->row_array();
+            if($result['is_show']=='1'){
+                $this->db->update('article',array('is_show' =>'0'), array('id'=>$id));
+                $this->response_data('success','未发布');
+            }else{
+                $this->db->update('article',array('is_show' =>'1'), array('id'=>$id));
+                $this->response_data('success','已发布');
+            }
+        }
+    }
+
+    /**
+     * 删除文章
+     */
+
+    public function delArticle(){
+        if(IS_AJAX){
+            $id = $this->input->post('id');
+            $result = $this->db->get_where('article',array('id'=>$id))->row_array();
+            $this->db->update('article',array('is_del' =>'1'), array('id'=>$id));
+            $this->response_data('success','删除成功');
         }
     }
 

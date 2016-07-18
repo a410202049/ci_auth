@@ -35,7 +35,7 @@
                         <div class="form-group">
                             <label class="col-lg-2 control-label">选择分类：</label>
                             <div class="col-sm-2">
-                                <select name="cat_id" class="form-control m-b valid">
+                                <select id="cat_id" name="cat_id" class="form-control m-b valid">
                                     <?php echo $categorys;?> 
                                 </select>                            
                             </div>
@@ -44,40 +44,50 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">文章标题：</label>
                             <div class="col-sm-3">
-                                <input type="text" class="form-control" name="title">
+                                <input type="text" class="form-control" name="title" value="<?php echo $result['title'];?>">
+                                <input type="hidden" name="id" value="<?php echo $result['id'];?>">
                             </div>
                             <label class="col-sm-2 control-label">文章英文标题：</label>
                             <div class="col-sm-3">
-                                <input type="text" class="form-control" name="title_en">
+                                <input type="text" class="form-control" name="title_en" value="<?php echo $result['title_en'];?>">
                             </div>
                         </div>
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">文章关键词：</label>
                             <div class="col-sm-3">
-                                <input type="text" class="form-control" name="keywords">
+                                <input type="text" class="form-control" name="keywords" value="<?php echo $result['keywords'];?>">
                             </div>
 
                             <label class="col-sm-2 control-label">文章英文关键词：</label>
                             <div class="col-sm-3">
-                                <input type="text" class="form-control" name="keywords_en">
+                                <input type="text" class="form-control" name="keywords_en" value="<?php echo $result['keywords_en'];?>">
                             </div>
                         </div>
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">文章描述：</label>
                             <div class="col-sm-3">
-                                <textarea class="form-control" name="description"></textarea>
+                                <textarea class="form-control" name="description"><?php echo $result['description'];?></textarea>
                             </div>
                             <label class="col-sm-2 control-label">文章英文描述：</label>
                             <div class="col-sm-3">
-                                <textarea class="form-control" name="description_en"></textarea>
+                                <textarea class="form-control" name="description_en"><?php echo $result['description_en'];?></textarea>
                             </div>
                         </div>
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">文章封面：</label>
                             <div class="col-sm-8">
+                            <?php if($result['image']){?>
+                            <ul class="imgListUp">
+                                <li>
+                                    <div class="file_bar"><p class="file_name">article/1468835853.jpg</p><span class="file_del" data-index="0" title="删除"></span>
+                                    </div>
+                                    <img src="/public/uploads/<?php echo $result['image'];?>"><input type="hidden" value="<?php echo $result['image'];?>" name="imagesList">
+                                </li>
+                            </ul>
+                            <?php }?>
                                 <div id="selector" class="btn btn-primary uploadFileBtn"><i class="fa fa-plus"></i>&nbsp;&nbsp;添加封面</div>
                             </div>
                         </div>
@@ -99,7 +109,7 @@
 
                         <div class="form-group">
                             <div class="col-sm-4 col-sm-offset-2">
-                                <button type="submit" class="btn btn-primary" >发布文章</button>
+                                <button type="submit" class="btn btn-primary" >编辑文章</button>
                                 <a class="btn btn-white" href="<?php echo base_url('admin/Article/articleList')?>">返回</a>
                             </div>
                         </div>
@@ -116,6 +126,15 @@
         window.onload = function(){
             var ue = UE.getEditor('content');
             var ue_en = UE.getEditor('content_en');
+
+
+            ue.addListener("ready", function () {
+                ue.setContent("<?php echo htmlspecialchars_decode($result['content']);?>");
+            });
+            ue_en.addListener("ready", function () {
+                ue_en.setContent("<?php echo htmlspecialchars_decode($result['content_en']);?>");
+            });
+
             var up = new Upload("<?php echo site_url('admin/Index/do_upload/?filepath=article') ?>",'selector','1');
 
             $("#add-article").validate({
@@ -141,7 +160,7 @@
                     }else{
                         $.ajax({
                          type: "POST",
-                         url: "<?php echo base_url('admin/Article/addArticle');?>",
+                         url: "<?php echo base_url('admin/Article/editArticle');?>",
                          data: $(form).serialize(),
                          dataType: "json",
                          success: function(data){
@@ -156,6 +175,8 @@
 
                 }
             })
+
+            $('#cat_id [value="<?php echo $result["cat_id"];?>"]').attr("selected",true);
         }
     </script>
 <?php $this->load->view('admin/Common/footer.html');?>          
