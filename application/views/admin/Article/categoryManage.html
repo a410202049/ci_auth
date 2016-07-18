@@ -17,7 +17,7 @@
                     <form id="addMenuForm" role="form" class="form-inline">
                             <div class="form-group padding-right">
                                 <label>父级分类：</label>
-                                    <select class="form-control" name="pid">
+                                    <select class="form-control" name="parent_id">
                                         <option value="0">--顶级分类--</option>
                                         <?php echo $menus;?>
                                     </select>
@@ -79,35 +79,59 @@
         </div>
     </div>
 
-    <!-- 编辑菜单模态框 -->
+    <!-- 编辑分类模态框 -->
     <div class="modal fade" id="edit_menu" tabindex="-1" role="dialog" aria-hidden="true">
        <div class="modal-dialog">
           <div class="modal-content">
              <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title">编辑菜单</h4>
+                <h4 class="modal-title">编辑分类</h4>
              </div>
              <div class="modal-body">
-                <form class="form-horizontal" id="form-edit-menu" autocomplete="off">
+                <form class="form-horizontal" id="form-edit-category" autocomplete="off">
 
                     <div class="form-group">
-                        <label class="col-lg-3 control-label">菜单名称：</label>
+                        <label class="col-lg-3 control-label">分类名称：</label>
                         <div class="col-lg-8">
-                            <input type="text" class="form-control" required="true" name="menu_title" id="menu_title">
-                            <input type="hidden" name="menuid" id="menuid">
+                            <input type="text" class="form-control" name="cat_name" id="cat_name">
+                            <input type="hidden" name="category_id" id="category_id">
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label class="col-lg-3 control-label">是否是外链：</label>
-                        <div class="col-sm-8">
-                            <select class="form-control m-b" id="is_chain">
-                                <option value="1">是</option>
-                                <option value="0">否</option>
-                            </select>
+                        <label class="col-lg-3 control-label">英文分类名称：</label>
+                        <div class="col-lg-8">
+                            <input type="text" class="form-control" name="cat_name_en" id="cat_name_en">
                         </div>
                     </div>
 
+                    <div class="form-group">
+                        <label class="col-lg-3 control-label">分类关键词：</label>
+                        <div class="col-lg-8">
+                            <input type="text" class="form-control" name="keywords" id="keywords">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-lg-3 control-label">英文分类关键词：</label>
+                        <div class="col-lg-8">
+                            <input type="text" class="form-control" name="keywords_en" id="keywords_en">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-lg-3 control-label">分类描述：</label>
+                        <div class="col-lg-8">
+                            <input type="text" class="form-control" name="description" id="description">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-lg-3 control-label">英文分类描述：</label>
+                        <div class="col-lg-8">
+                            <input type="text" class="form-control" name="description_en" id="description_en">
+                        </div>
+                    </div>
                     <div class="form-group">
                         <label class="col-lg-3 control-label">选择层级：</label>
                         <div class="col-sm-8">
@@ -119,7 +143,7 @@
 
                     <div class="form-group">
                         <div class="col-sm-5 col-sm-offset-3">
-                            <span class="btn btn-primary" id="save_menu">保存内容</span>
+                            <button class="btn btn-primary" type="submit">保存内容</button>
                             <button type="button" class="btn btn-default col-sm-offset-1" data-dismiss="modal">取消</button>
                         </div>
                     </div>
@@ -140,17 +164,20 @@
                 var id = $(this).data('val');
                 $.ajax({
                     type:"POST",
-                    url:"/admin/SystemSeting/ajaxGetMenu",
+                    url:"/admin/Article/ajaxGetCategory",
                     data:{id:id},
                     dataType:"json",
                     success:function(data){
                         if(data.status=='success'){
                             $('#menus').html(data.data['menus']);
-                            $('#menus').find("option[value='"+data.data['info']['pid']+"']").attr("selected",true);
-                            $('#is_chain').find("option[value='"+parseInt(data.data['info']['is_chain'])+"']").attr("selected",true);
-                            console.log(data);
-                            $('#menu_title').val(data.data['info']['title']);
-                            $('#menuid').val(data.data['info']['id']);
+                            $('#category_id').val(data.data['info']['id']);
+                            $('#cat_name').val(data.data['info']['cat_name']);
+                            $('#cat_name_en').val(data.data['info']['cat_name_en']);
+                            $('#keywords').val(data.data['info']['keywords']);
+                            $('#keywords_en').val(data.data['info']['keywords_en']);
+                            $('#description').val(data.data['info']['description']);
+                            $('#description_en').val(data.data['info']['description_en']);
+                            $('#menus').find("option[value='"+data.data['info']['parent_id']+"']").attr("selected",true);
                         }else{
                             layer.msg(data.message,{icon: 2});
                         }
@@ -159,34 +186,37 @@
                 $('#edit_menu').modal('show');
             })
 
-            //编辑保存菜单
-            $('#save_menu').click(function(){
-                id = $('#menuid').val();
-                is_chain = $('#is_chain').val();
-                pid = $('#menus').val();
-                menu_title = $('#menu_title').val();
-                $.ajax({
-                    type:"POST",
-                    url:"/admin/SystemSeting/saveMenu",
-                    data:{id:id,is_chain:is_chain,pid:pid,menu_title:menu_title},
-                    dataType:"json",
-                    success:function(data){
+            $("#form-edit-category").validate({
+                rules: {
+                  cat_name:"required",
+                  cat_name_en:"required"
+                },
+                messages: {
+                  cat_name: "分类名称不能为空",
+                  cat_name_en: "分类英文名称不能为空"
+                },
+                submitHandler:function(form){
+                    $.ajax({
+                     type: "POST",
+                     url: "<?php echo base_url('admin/Article/saveCategory');?>",
+                     data: $(form).serialize(),
+                     dataType: "json",
+                     success: function(data){
                         if(data.status=='success'){
                             layer.msg(data.message,{icon: 1});
-                            window.location.reload(true);
-                            layer.close(index);
+                            window.location.reload();
                         }else{
                             layer.msg(data.message,{icon: 2});
                         }
-                    }
-                })
+                     }})
+                }
             })
 
             function del_menu(id){
-                 layer.confirm('您确定要删除此菜单？', {icon: 3, title:'确认删除菜单'}, function(index){
+                 layer.confirm('您确定要删除此分类？', {icon: 3, title:'确认删除分类'}, function(index){
                     $.ajax({
                         type:"POST",
-                        url:"/admin/SystemSeting/delMenu",
+                        url:"/admin/Article/delCategory",
                         data:{id:id},
                         dataType:"json",
                         success:function(data){
@@ -205,7 +235,7 @@
             $('#rule-order-btn').click(function(){
                 $.ajax({
                  type: "POST",
-                 url: "/admin/SystemSeting/order",
+                 url: "/admin/Article/order",
                  data: $('#rule-order').serialize(),
                  dataType: "json",
                  success: function(data){
@@ -225,19 +255,19 @@
 
             function add_menu(data){
                 var title = data.find('input[name=cat_name]').val();
-                var name = data.find('input[name=name]').val();
+                var title_en = data.find('input[name=cat_name_en]').val();
                 if(!title){
                     layer.msg('分类名称不能为空',{icon: 2});
+                }else if(!title_en){
+                    layer.msg('英文分类名称不能为空',{icon: 2});
                 }else{
-
-                    layer.confirm('您确定要添加此菜单？', {icon: 3, title:'确认添加菜单'}, function(index){
+                    layer.confirm('您确定要添加此分类？', {icon: 3, title:'确认添加分类'}, function(index){
                         $.ajax({
                             type:"POST",
-                            url:"/admin/SystemSeting/addMenu",
+                            url:"/admin/Article/addCategory",
                             data:data.serialize(),
                             dataType:"json",
                             success:function(data){
-                                // console.log(data);
                                 if(data.status=='success'){
                                     layer.msg(data.message,{icon: 1});
                                     window.location.reload(true);
