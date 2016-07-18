@@ -70,8 +70,18 @@ class Index extends Base_Controller {
 	 * 上传图片
 	 */
    public function do_upload()
-    {
-        $config['upload_path']      = './public/uploads/';
+    {	
+    	$filepath = $this->input->get('filepath');
+    	if(!empty($filepath)){
+    		$config['upload_path']      = './public/uploads/'.$filepath;
+            if(!file_exists($config['upload_path'])){
+                mkdir($config['upload_path'],0777,true);//如果不存在就创建
+            }
+            $filepath = $filepath.'/';
+    	}else{
+        	$config['upload_path']      = './public/uploads/';
+        	$filepath = '';
+    	}
         $config['allowed_types']    = 'gif|jpg|png';
         $config['file_name']  = time(); //文件名不使用原始名
         // $config['max_size']     = 100;
@@ -80,14 +90,12 @@ class Index extends Base_Controller {
         $this->load->library('upload', $config);
         if ( ! $this->upload->do_upload('file'))
         {	
-        	// echo $this->upload->display_errors();
-        	// exit;
             $this->response_data('error', strip_tags($this->upload->display_errors()));
         }
         else
         {
             $data =$this->upload->data();
-            $arr['file_name'] = $data['file_name'];
+            $arr['file_name'] = $filepath.$data['file_name'];
             $this->response_data('success','上传成功',$arr);
         }
     }
