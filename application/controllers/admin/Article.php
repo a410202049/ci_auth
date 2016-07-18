@@ -101,11 +101,40 @@ class Article extends Auth_Controller {
      * @return [type] [description]
      */
     public function articleList(){
-        echo "xxx";
+        $arr['articles'] = array();
+        $rules = $this->db->order_by('sort', 'asc')->get('article_category')->result_array();
+        foreach ($rules as $key => $value) {
+            $rules[$key]['order'] = $value['sort'];
+            $rules[$key]['parentid']= $value['parent_id'];
+            $rules[$key]['cat_name'] = $value['cat_name'];
+            $rules[$key]['cat_name_en'] = $value['cat_name_en'];
+            $rules[$key]['keywords'] = $value['keywords'];
+            $rules[$key]['keywords_en'] = $value['keywords_en'];
+            $rules[$key]['description'] = $value['description'];
+            $rules[$key]['description_en'] = $value['description_en'];
+        }
+        $this->load->library('tree');
+        $this->tree->icon = array('&nbsp;&nbsp;&nbsp;','&nbsp;&nbsp;&nbsp;├─ ','&nbsp;&nbsp;&nbsp;└─ ');
+        $this->tree->nbsp = '&nbsp;&nbsp;&nbsp;';
+        $this->tree->init($rules);
+        $str = "<option value=\$id >\$spacer\$cat_name</option>";
+        $categorys = $this->tree->get_tree(0,$str,1);
+        $arr['categorys'] = $categorys;
+        $this->load->view('admin/Article/articleList.html',$arr);
     }
 
 
+    /**
+     * 添加文章
+     */
 
+    public function addArticle(){
+        if(IS_AJAX){
+            echo "1";
+        }else{
+             $this->load->view('admin/Article/addArticle.html');
+        }
+    }
 
     /**
      * 获取不包含本身菜单的层级

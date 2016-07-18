@@ -29,13 +29,14 @@ class SystemSeting extends Auth_Controller {
 	 * @return [type] [description]
 	 */
 	public function menus(){
-		$rules = $this->db->select('title,title_en,url,pid,id,create_time,is_chain,sort')->order_by('sort', 'asc')->get('menus')->result_array();
+		$rules = $this->db->order_by('sort', 'asc')->get('menus')->result_array();
         foreach ($rules as $key => $value) {
             $rules[$key]['order'] = $value['sort'];
         	$rules[$key]['parentid']= $value['pid'];
         	$rules[$key]['name'] = $value['title'];
             $rules[$key]['name_en'] = $value['title_en'];
         	$rules[$key]['title'] = $value['url'];
+            $rules[$key]['route_url'] = $value['route_url'];
         	$rules[$key]['ischain'] = $value['is_chain']?'是':'否';
         	$rules[$key]['create_time'] = date('Y-m-d H:i:s', $value['create_time']);
         }
@@ -51,6 +52,7 @@ class SystemSeting extends Auth_Controller {
                     <td>\$spacer\$name</td>
                     <td>\$spacer\$name_en</td>
                     <td>\$title</td>
+                    <td>\$route_url</td>
                     <td>\$ischain</td>
                     <td>\$create_time</td>
                     <td><a class='option edit-menu' data-val='\$id'>编辑</a>|<a class='option del-menu' data-val='\$id'>删除</a></td>
