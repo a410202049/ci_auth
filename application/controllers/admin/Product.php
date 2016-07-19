@@ -254,7 +254,6 @@ class Product extends Auth_Controller {
     public function delProduct(){
         if(IS_AJAX){
             $id = $this->input->post('id');
-            $result = $this->db->get_where('product',array('id'=>$id))->row_array();
             $this->db->update('product',array('is_del' =>'1'), array('id'=>$id));
             $this->response_data('success','删除成功');
         }

@@ -6532,3 +6532,7 @@ a.pg_next{
 #addMenu {
     vertical-align: top;
 }
+
+.hide_logo{
+  display: none;
+}
