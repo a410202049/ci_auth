@@ -1,0 +1,143 @@
+<?php $this->load->view('admin/Common/nav.html');?>
+<div class="row">
+       <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>产品列表</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <form class="form-inline" role="form" >
+                            <div class="form-group padding-right">
+                                <a href="<?php echo base_url('admin/Product/addProduct');?>" class="btn btn-primary add-product"><i class="fa fa-plus"></i>&nbsp;&nbsp;添加产品</a>
+                            </div>
+                            <div class="form-group padding-right">
+                                <label>产品分类：</label>
+                                    <select id="cat_select" class="form-control">
+                                        <option value='all' >全部</option>
+                                        <?php echo $categorys;?> 
+                                    </select>
+                            </div>
+                    </form>
+                    <div class="table-box">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>产品分类</th>
+                                    <th>产品标题</th>
+                                    <th>产品描述</th>
+                                    <th>产品访问量</th>
+                                    <th>添加时间</th>
+                                    <th>是否发布</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                             <?php foreach ($prodcts as $item): ?>
+                                <tr>
+                                    <td><?php echo $item['id']; ?></td>
+                                    <td><?php echo $item['categoryName']; ?></td>
+                                    <td><?php echo $item['title']; ?></td>
+                                    <td><?php echo $item['description']; ?></td>
+                                    <td><?php echo $item['views']; ?></td>
+                                    <td><?php echo date('Y-m-d H:i:s',$item['add_time']); ?></td>
+                                    <td><?php echo $item['isshow']; ?></td>
+                                    <td><a data-id="<?php echo $item['id']; ?>" href="javascript:void(0);" class="option isshow"><?php echo $item['isshow']; ?></a>|<a href="<?php echo base_url('admin/Product/editProduct/id/'.$item['id']);?>" class="option">编辑</a>|<a data-id="<?php echo $item['id']; ?>" class="option del_product">删除</a></td>
+                                </tr>
+                            <?php endforeach; ?>                          
+                            </tbody>
+                        </table>
+                    </div>
+                    <?php echo $this->mypage_class->show(1); ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script type="text/javascript">
+        window.onload = function(){
+
+            $('#cat_select').change(function(){
+                cateid = $(this).val();
+                window.location.href = changeURLArg(window.location.href,'cateid',cateid);
+            });
+
+            $('.isshow').click(function(){
+                id = $(this).data('id');
+                $.ajax({
+                    type: "POST",
+                    url: "<?php echo base_url('admin/Product/isshow_product');?>",
+                    data: {id:id},
+                    dataType: "json",
+                    success: function(data){
+                    if(data.status=='success'){
+                        layer.msg(data.message,{icon: 1});
+                        window.location.reload();
+                    }else{
+                        layer.msg(data.message,{icon: 2});
+                    }
+                }})
+            });
+
+            $('.del_product').click(function(){
+                id = $(this).data('id');
+                layer.confirm('您确定要删除此产品？', {icon: 3, title:'确认删除产品'}, function(index){
+                    $.ajax({
+                        type: "POST",
+                        url: "<?php echo base_url('admin/Product/delProduct');?>",
+                        data: {id:id},
+                        dataType: "json",
+                        success: function(data){
+                        if(data.status=='success'){
+                            layer.msg(data.message,{icon: 1});
+                            window.location.reload();
+                        }else{
+                            layer.msg(data.message,{icon: 2});
+                        }
+                    }})
+
+                })
+
+            });
+            
+
+            $('#cat_select [value="<?php echo $cateid;?>"]').attr("selected",true);
+
+            /*
+            * url 目标url
+            * arg 需要替换的参数名称
+            * arg_val 替换后的参数的值
+            * return url 参数替换后的url
+            */
+            function changeURLArg(url,arg,arg_val){
+                var pattern=arg+'=([^&]*)';
+                var replaceText=arg+'='+arg_val;
+                if(url.match(pattern)){
+                    var tmp='/('+ arg+'=)([^&]*)/gi';
+                    tmp=url.replace(eval(tmp),replaceText);
+                    return tmp;
+                }else{
+                    if(url.match('[\?]')){
+                        return url+'&'+replaceText;
+                    }else{
+                        return url+'?'+replaceText;
+                    }
+                }
+                return url+'\n'+arg+'\n'+arg_val;
+            }
+        }
+    </script>
+<?php $this->load->view('admin/Common/footer.html');?>          
+
+
+
