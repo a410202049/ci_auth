@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50547
 File Encoding         : 65001
 
-Date: 2016-07-19 15:38:06
+Date: 2016-07-19 17:11:51
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -3299,7 +3299,7 @@ CREATE TABLE `esc_auth_rule` (
   `isshow` int(11) DEFAULT '1',
   `condition` varchar(30) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=1041 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=1042 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of esc_auth_rule
@@ -3330,6 +3330,7 @@ INSERT INTO `esc_auth_rule` VALUES ('1037', '产品管理', 'Product/index', '0'
 INSERT INTO `esc_auth_rule` VALUES ('1038', '产品分类', 'Product/categoryManage', '1037', '50', '1468894341', '', '1', null);
 INSERT INTO `esc_auth_rule` VALUES ('1039', '产品列表', 'Product/productList', '1037', '50', '1468894709', '', '1', null);
 INSERT INTO `esc_auth_rule` VALUES ('1040', '单页面管理', 'SinglePage/index', '0', '50', '1468899903', 'fa fa-file-o', '1', null);
+INSERT INTO `esc_auth_rule` VALUES ('1041', '友情链接', 'friendLink/index', '0', '50', '1468915135', 'fa fa-code-fork', '1', null);
 
 -- ----------------------------
 -- Table structure for `esc_cities`
@@ -3715,6 +3716,26 @@ INSERT INTO `esc_large_area` VALUES ('7', '东北地区');
 INSERT INTO `esc_large_area` VALUES ('8', '台港澳地区');
 
 -- ----------------------------
+-- Table structure for `esc_link`
+-- ----------------------------
+DROP TABLE IF EXISTS `esc_link`;
+CREATE TABLE `esc_link` (
+  `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
+  `title` varchar(150) NOT NULL DEFAULT '',
+  `add_time` int(11) unsigned NOT NULL DEFAULT '0',
+  `logo` varchar(255) DEFAULT NULL,
+  `url` varchar(255) DEFAULT NULL,
+  `is_pic` int(1) DEFAULT '0' COMMENT '0文字logo 1图片logo',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=34 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of esc_link
+-- ----------------------------
+INSERT INTO `esc_link` VALUES ('32', '999', '1468919417', 'link/1468919411.jpg', '111', '1');
+INSERT INTO `esc_link` VALUES ('33', '6666', '1468919433', 'link/1468919425.JPG', '9999999', '1');
+
+-- ----------------------------
 -- Table structure for `esc_menus`
 -- ----------------------------
 DROP TABLE IF EXISTS `esc_menus`;
@@ -3887,7 +3908,7 @@ INSERT INTO `esc_single_page` VALUES ('17', '888', '99999', '&lt;p&gt;qweqweqweq
 INSERT INTO `esc_single_page` VALUES ('18', '444', '3333', '&lt;p&gt;ttt&lt;br/&gt;&lt;/p&gt;', '&lt;p&gt;rrrr&lt;br/&gt;&lt;/p&gt;', '44', '444', '1468833270', '0', '444', '44', '1', '1');
 INSERT INTO `esc_single_page` VALUES ('20', '2', '1', '&lt;p&gt;888&lt;br/&gt;&lt;/p&gt;', '&lt;p&gt;77&lt;br/&gt;&lt;/p&gt;', '4', '3', '1468910075', '0', '66', '55', '1', '1');
 INSERT INTO `esc_single_page` VALUES ('21', '2222', '9999999999', '&lt;p&gt;888&lt;br/&gt;&lt;/p&gt;', '&lt;p&gt;777&lt;br/&gt;&lt;/p&gt;', '4444', '3333', '1468910101', '0', '6666', '55555', '1', '1');
-INSERT INTO `esc_single_page` VALUES ('22', '2', '1', '&lt;p&gt;8&lt;br/&gt;&lt;/p&gt;', '&lt;p&gt;7&lt;br/&gt;&lt;/p&gt;', '4', '3', '1468912171', '0', '6', '5', '1', '0');
+INSERT INTO `esc_single_page` VALUES ('22', '2', '1', '&lt;p&gt;8&lt;br/&gt;&lt;/p&gt;', '&lt;p&gt;7&lt;br/&gt;&lt;/p&gt;', '4', '3', '1468915483', '0', '6', '5', '1', '0');
 
 -- ----------------------------
 -- Table structure for `esc_site_seting`
@@ -3935,7 +3956,7 @@ CREATE TABLE `esc_user` (
 -- ----------------------------
 -- Records of esc_user
 -- ----------------------------
-INSERT INTO `esc_user` VALUES ('1', 'admin', '21232f297a57a5a743894a0e4a801fc3', '410202049@qq.com', '', '1', '1468892175', '127.0.0.1', 'avatar572fe6c0789de_703_name1.jpg', '1');
+INSERT INTO `esc_user` VALUES ('1', 'admin', '21232f297a57a5a743894a0e4a801fc3', '410202049@qq.com', '', '1', '1468914089', '127.0.0.1', 'avatar578dee632211e_118_name1.jpg', '1');
 INSERT INTO `esc_user` VALUES ('8', 'kerry', 'e10adc3949ba59abbe56e057f20f883e', '', '', '1', '1462938785', '127.0.0.1', 'avatar572c7dc97b292_867_name1.jpg', '1');
 INSERT INTO `esc_user` VALUES ('9', 'a123456', 'e10adc3949ba59abbe56e057f20f883e', '', '', '1', '1462534136', '127.0.0.1', null, '1');
 
