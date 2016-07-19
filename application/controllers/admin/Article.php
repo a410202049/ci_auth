@@ -103,10 +103,10 @@ class Article extends Auth_Controller {
     public function articleList(){
         $array['url'] = 'admin/Article/articleList';
         $array['tableName'] = 'article';
-        $cid = $this->input->get('cid');
-        $cid = isset($cid) ? $cid : 'all';
-        if($cid != 'all'){
-           $array['where']  = array('cat_id'=>$cid,'is_del'=>'0');
+        $cateid = $this->input->get('cateid');
+        $cateid = isset($cateid) ? $cateid : 'all';
+        if($cateid != 'all'){
+           $array['where']  = array('cat_id'=>$cateid,'is_del'=>'0');
         }else{
              $array['where'] = array('is_del'=>'0');
         }
@@ -136,7 +136,7 @@ class Article extends Auth_Controller {
         $str = "<option value=\$id >\$spacer\$cat_name</option>";
         $categorys = $this->tree->get_tree(0,$str,1);
         $arr['categorys'] = $categorys;
-        $arr['cid'] = $cid;
+        $arr['cateid'] = $cateid;
         $this->load->view('admin/Article/articleList.html',$arr);
     }
 

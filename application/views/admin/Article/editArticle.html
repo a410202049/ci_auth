@@ -95,7 +95,7 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">文章正文：</label>
                             <div class="col-sm-10">
-                                <script id="content" name="content" type="text/plain" style="height:300px;"></script>
+                                <script id="content" name="content" type="text/plain" style="height:300px;"><?php echo htmlspecialchars_decode($result['content']);?></script>
                             </div>
                         </div>
 
@@ -103,7 +103,7 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">文章英文正文：</label>
                             <div class="col-sm-10">
-                                <script id="content_en" name="content_en" type="text/plain" style="height:300px;"></script>
+                                <script id="content_en" name="content_en" type="text/plain" style="height:300px;"><?php echo htmlspecialchars_decode($result['content']);?></script>
                             </div>
                         </div>
 
@@ -128,12 +128,6 @@
             var ue_en = UE.getEditor('content_en');
 
 
-            ue.addListener("ready", function () {
-                ue.setContent("<?php echo htmlspecialchars_decode($result['content']);?>");
-            });
-            ue_en.addListener("ready", function () {
-                ue_en.setContent("<?php echo htmlspecialchars_decode($result['content_en']);?>");
-            });
 
             var up = new Upload("<?php echo site_url('admin/Index/do_upload/?filepath=article') ?>",'selector','1');
 

@@ -68,8 +68,8 @@
         window.onload = function(){
 
             $('#cat_select').change(function(){
-                cid = $(this).val();
-                window.location.href = changeURLArg(window.location.href,'cid',cid);
+                cateid = $(this).val();
+                window.location.href = changeURLArg(window.location.href,'cateid',cateid);
             });
 
             $('.isshow').click(function(){
@@ -111,7 +111,7 @@
             });
             
 
-            $('#cat_select [value="<?php echo $cid;?>"]').attr("selected",true);
+            $('#cat_select [value="<?php echo $cateid;?>"]').attr("selected",true);
 
             /*
             * url 目标url
