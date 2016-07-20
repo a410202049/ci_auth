@@ -43,36 +43,27 @@
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">产品标题：</label>
-                            <div class="col-sm-3">
+                            <div class="col-sm-5">
                                 <input type="text" class="form-control" name="title">
                             </div>
-                            <label class="col-sm-2 control-label">产品英文标题：</label>
-                            <div class="col-sm-3">
-                                <input type="text" class="form-control" name="title_en">
-                            </div>
+
                         </div>
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">产品关键词：</label>
-                            <div class="col-sm-3">
+                            <div class="col-sm-5">
                                 <input type="text" class="form-control" name="keywords">
                             </div>
 
-                            <label class="col-sm-2 control-label">产品英文关键词：</label>
-                            <div class="col-sm-3">
-                                <input type="text" class="form-control" name="keywords_en">
-                            </div>
+
                         </div>
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">产品描述：</label>
-                            <div class="col-sm-3">
+                            <div class="col-sm-5">
                                 <textarea class="form-control" name="description"></textarea>
                             </div>
-                            <label class="col-sm-2 control-label">产品英文描述：</label>
-                            <div class="col-sm-3">
-                                <textarea class="form-control" name="description_en"></textarea>
-                            </div>
+
                         </div>
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
@@ -90,12 +81,7 @@
                         </div>
 
                         <div class="hr-line-dashed"></div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">产品英文正文：</label>
-                            <div class="col-sm-10">
-                                <script id="content_en" name="content_en" type="text/plain" style="height:300px;"></script>
-                            </div>
-                        </div>
+
 
                         <div class="form-group">
                             <div class="col-sm-4 col-sm-offset-2">
@@ -115,29 +101,22 @@
     <script type="text/javascript">
         window.onload = function(){
             var ue = UE.getEditor('content');
-            var ue_en = UE.getEditor('content_en');
             var up = new Upload("<?php echo site_url('admin/Index/do_upload/?filepath=product') ?>",'selector','1');
 
             $("#add-product").validate({
                 rules: {
                   title:"required",
-                  title_en:"required",
                   keyword:"required",
-                  keyword_en:"required",
-                  description:"required",
-                  description_en:"required"
+                  description:"required"
                 },
                 messages: {
                   title: "产品名称不能为空",
-                  title_en: "产品英文名称不能为空",
                   keywords: "关键词不能为空",
-                  keywords_en: "英文关键词不能为空",
-                  description: "描述不能为空",
-                  description_en: "英文描述不能为空"
+                  description: "描述不能为空"
                 },
                 submitHandler:function(form){
-                    if(ue.getContent() == '' || ue_en.getContent() == ''){
-                        layer.msg('产品正文或产品英文正文不能为空',{icon: 2});
+                    if(ue.getContent() == ''){
+                        layer.msg('产品正文不能为空',{icon: 2});
                     }else{
                         $.ajax({
                          type: "POST",

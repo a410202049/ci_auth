@@ -42,42 +42,33 @@
                         </div>
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">文章标题：</label>
-                            <div class="col-sm-3">
+                            <label class="col-sm-2 control-label">产品标题：</label>
+                            <div class="col-sm-5">
                                 <input type="text" class="form-control" name="title" value="<?php echo $result['title'];?>">
                                 <input type="hidden" name="id" value="<?php echo $result['id'];?>">
                             </div>
-                            <label class="col-sm-2 control-label">文章英文标题：</label>
-                            <div class="col-sm-3">
-                                <input type="text" class="form-control" name="title_en" value="<?php echo $result['title_en'];?>">
-                            </div>
+
                         </div>
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">文章关键词：</label>
-                            <div class="col-sm-3">
+                            <label class="col-sm-2 control-label">产品关键词：</label>
+                            <div class="col-sm-5">
                                 <input type="text" class="form-control" name="keywords" value="<?php echo $result['keywords'];?>">
                             </div>
 
-                            <label class="col-sm-2 control-label">文章英文关键词：</label>
-                            <div class="col-sm-3">
-                                <input type="text" class="form-control" name="keywords_en" value="<?php echo $result['keywords_en'];?>">
-                            </div>
+
                         </div>
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">文章描述：</label>
-                            <div class="col-sm-3">
+                            <label class="col-sm-2 control-label">产品描述：</label>
+                            <div class="col-sm-5">
                                 <textarea class="form-control" name="description"><?php echo $result['description'];?></textarea>
                             </div>
-                            <label class="col-sm-2 control-label">文章英文描述：</label>
-                            <div class="col-sm-3">
-                                <textarea class="form-control" name="description_en"><?php echo $result['description_en'];?></textarea>
-                            </div>
+
                         </div>
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">文章封面：</label>
+                            <label class="col-sm-2 control-label">产品封面：</label>
                             <div class="col-sm-8">
                             <?php if($result['image']){?>
                             <ul class="imgListUp">
@@ -93,24 +84,16 @@
                         </div>
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">文章正文：</label>
+                            <label class="col-sm-2 control-label">产品正文：</label>
                             <div class="col-sm-10">
                                 <script id="content" name="content" type="text/plain" style="height:300px;"><?php echo htmlspecialchars_decode($result['content']);?></script>
                             </div>
                         </div>
-
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">文章英文正文：</label>
-                            <div class="col-sm-10">
-                                <script id="content_en" name="content_en" type="text/plain" style="height:300px;"><?php echo htmlspecialchars_decode($result['content']);?></script>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
                             <div class="col-sm-4 col-sm-offset-2">
-                                <button type="submit" class="btn btn-primary" >编辑文章</button>
-                                <a class="btn btn-white" href="<?php echo base_url('admin/Article/articleList')?>">返回</a>
+                                <button type="submit" class="btn btn-primary" >编辑产品</button>
+                                <a class="btn btn-white" href="<?php echo base_url('admin/Product/productList')?>">返回</a>
                             </div>
                         </div>
                         </div>
@@ -125,7 +108,6 @@
     <script type="text/javascript">
         window.onload = function(){
             var ue = UE.getEditor('content');
-            var ue_en = UE.getEditor('content_en');
 
 
 
@@ -134,33 +116,27 @@
             $("#add-article").validate({
                 rules: {
                   title:"required",
-                  title_en:"required",
                   keyword:"required",
-                  keyword_en:"required",
-                  description:"required",
-                  description_en:"required"
+                  description:"required"
                 },
                 messages: {
-                  title: "站点名称不能为空",
-                  title_en: "站点英文名称不能为空",
+                  title: "标题不能为空",
                   keywords: "关键词不能为空",
-                  keywords_en: "英文关键词不能为空",
-                  description: "描述不能为空",
-                  description_en: "英文描述不能为空"
+                  description: "描述不能为空"
                 },
                 submitHandler:function(form){
-                    if(ue.getContent() == '' || ue_en.getContent() == ''){
-                        layer.msg('文章正文或文章英文正文不能为空',{icon: 2});
+                    if(ue.getContent() == ''){
+                        layer.msg('产品正文不能为空',{icon: 2});
                     }else{
                         $.ajax({
                          type: "POST",
-                         url: "<?php echo base_url('admin/Article/editArticle');?>",
+                         url: "<?php echo base_url('admin/Product/editProduct');?>",
                          data: $(form).serialize(),
                          dataType: "json",
                          success: function(data){
                             if(data.status=='success'){
                                 layer.msg(data.message,{icon: 1});
-                                window.location.href = "<?php echo base_url('admin/Article/articleList');?>";
+                                window.location.href = "<?php echo base_url('admin/Product/productList');?>";
                             }else{
                                 layer.msg(data.message,{icon: 2});
                             }

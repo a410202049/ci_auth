@@ -15,11 +15,8 @@ class Article extends Auth_Controller {
             $rules[$key]['order'] = $value['sort'];
             $rules[$key]['parentid']= $value['parent_id'];
             $rules[$key]['cat_name'] = $value['cat_name'];
-            $rules[$key]['cat_name_en'] = $value['cat_name_en'];
             $rules[$key]['keywords'] = $value['keywords'];
-            $rules[$key]['keywords_en'] = $value['keywords_en'];
             $rules[$key]['description'] = $value['description'];
-            $rules[$key]['description_en'] = $value['description_en'];
         }
         $this->load->library('tree');
         $this->tree->icon = array('&nbsp;&nbsp;&nbsp;','&nbsp;&nbsp;&nbsp;├─ ','&nbsp;&nbsp;&nbsp;└─ ');
@@ -31,11 +28,8 @@ class Article extends Auth_Controller {
                     <td width='60px'><input type='text' class='form-control' name='order[\$id]' value='\$order'></td>
                     <td>\$id</td>
                     <td>\$spacer\$cat_name</td>
-                    <td>\$spacer\$cat_name_en</td>
                     <td>\$keywords</td>
-                    <td>\$keywords_en</td>
                     <td>\$description</td>
-                    <td>\$description_en</td>
                     <td><a class='option edit-menu' data-val='\$id'>编辑</a>|<a class='option del-menu' data-val='\$id'>删除</a></td>
                 </tr>";
         $this->tree->init($rules);
@@ -123,11 +117,8 @@ class Article extends Auth_Controller {
             $rules[$key]['order'] = $value['sort'];
             $rules[$key]['parentid']= $value['parent_id'];
             $rules[$key]['cat_name'] = $value['cat_name'];
-            $rules[$key]['cat_name_en'] = $value['cat_name_en'];
             $rules[$key]['keywords'] = $value['keywords'];
-            $rules[$key]['keywords_en'] = $value['keywords_en'];
             $rules[$key]['description'] = $value['description'];
-            $rules[$key]['description_en'] = $value['description_en'];
         }
         $this->load->library('tree');
         $this->tree->icon = array('&nbsp;&nbsp;&nbsp;','&nbsp;&nbsp;&nbsp;├─ ','&nbsp;&nbsp;&nbsp;└─ ');
@@ -151,9 +142,7 @@ class Article extends Auth_Controller {
             $image = isset($arr['imagesList']) ? $arr['imagesList'] : '';
             $arr['image'] = $image;
             $arr['content'] = htmlspecialchars($arr['content']);
-            $arr['content_en'] = htmlspecialchars($arr['content_en']);
             $arr['keywords'] = emptyreplace($arr['keywords']);
-            $arr['keywords_en'] = emptyreplace($arr['keywords_en']);
             $arr['sort'] = '50';
             $arr['add_time'] = time();
             unset($arr['imagesList']);
@@ -165,11 +154,8 @@ class Article extends Auth_Controller {
                 $rules[$key]['order'] = $value['sort'];
                 $rules[$key]['parentid']= $value['parent_id'];
                 $rules[$key]['cat_name'] = $value['cat_name'];
-                $rules[$key]['cat_name_en'] = $value['cat_name_en'];
                 $rules[$key]['keywords'] = $value['keywords'];
-                $rules[$key]['keywords_en'] = $value['keywords_en'];
                 $rules[$key]['description'] = $value['description'];
-                $rules[$key]['description_en'] = $value['description_en'];
             }
             $this->load->library('tree');
             $this->tree->icon = array('&nbsp;&nbsp;&nbsp;','&nbsp;&nbsp;&nbsp;├─ ','&nbsp;&nbsp;&nbsp;└─ ');
@@ -193,9 +179,7 @@ class Article extends Auth_Controller {
             $image = isset($arr['imagesList']) ? $arr['imagesList'] : '';
             $arr['image'] = $image;
             $arr['content'] = htmlspecialchars($arr['content']);
-            $arr['content_en'] = htmlspecialchars($arr['content_en']);
             $arr['keywords'] = emptyreplace($arr['keywords']);
-            $arr['keywords_en'] = emptyreplace($arr['keywords_en']);
             $arr['sort'] = '50';
             $arr['add_time'] = time();
             unset($arr['imagesList']);
@@ -209,11 +193,8 @@ class Article extends Auth_Controller {
                 $rules[$key]['order'] = $value['sort'];
                 $rules[$key]['parentid']= $value['parent_id'];
                 $rules[$key]['cat_name'] = $value['cat_name'];
-                $rules[$key]['cat_name_en'] = $value['cat_name_en'];
                 $rules[$key]['keywords'] = $value['keywords'];
-                $rules[$key]['keywords_en'] = $value['keywords_en'];
                 $rules[$key]['description'] = $value['description'];
-                $rules[$key]['description_en'] = $value['description_en'];
             }
             $this->load->library('tree');
             $this->tree->icon = array('&nbsp;&nbsp;&nbsp;','&nbsp;&nbsp;&nbsp;├─ ','&nbsp;&nbsp;&nbsp;└─ ');
