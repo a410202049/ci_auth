@@ -22,9 +22,7 @@ class SinglePage extends Auth_Controller {
         if(IS_AJAX){
             $arr = $this->input->post();
             $arr['content'] = htmlspecialchars($arr['content']);
-            $arr['content_en'] = htmlspecialchars($arr['content_en']);
             $arr['keywords'] = emptyreplace($arr['keywords']);
-            $arr['keywords_en'] = emptyreplace($arr['keywords_en']);
             $arr['add_time'] = time();
             unset($arr['imagesList']);
             $this->db->insert('single_page', $arr);
@@ -41,9 +39,7 @@ class SinglePage extends Auth_Controller {
         if(IS_AJAX){
             $arr = $this->input->post();
             $arr['content'] = htmlspecialchars($arr['content']);
-            $arr['content_en'] = htmlspecialchars($arr['content_en']);
             $arr['keywords'] = emptyreplace($arr['keywords']);
-            $arr['keywords_en'] = emptyreplace($arr['keywords_en']);
             $arr['add_time'] = time();
 			$id = $arr['id'];
 			unset($arr['id']);
