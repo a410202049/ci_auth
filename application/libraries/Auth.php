@@ -3,26 +3,28 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Auth{
+    // //默认配置
+    // public $config = array(
+    //     'AUTH_ON'           => true,                      // 认证开关
+    //     'AUTH_TYPE'         => 1,                         // 认证方式，1为实时认证；2为登录认证。
+    //     'AUTH_GROUP'        => 'auth_group',        // 用户组数据表名
+    //     'AUTH_GROUP_ACCESS' => 'auth_group_access', // 用户-用户组关系表
+    //     'AUTH_RULE'         => 'auth_rule',         // 权限规则表
+    //     'AUTH_USER'         => 'user'             // 用户信息表
+    // );
 
-    //默认配置
-    protected $_config = array(
-        'AUTH_ON'           => true,                      // 认证开关
-        'AUTH_TYPE'         => 1,                         // 认证方式，1为实时认证；2为登录认证。
-        'AUTH_GROUP'        => 'auth_group',        // 用户组数据表名
-        'AUTH_GROUP_ACCESS' => 'auth_group_access', // 用户-用户组关系表
-        'AUTH_RULE'         => 'auth_rule',         // 权限规则表
-        'AUTH_USER'         => 'user'             // 用户信息表
-    );
-
+    public $config;
     protected $CI = "";
 
-    public function __construct() {
+    public function __construct($config) {
         $this->CI =& get_instance();
         $prefix = $this->CI->db->dbprefix;
-        $this->_config['AUTH_GROUP'] = $prefix.$this->_config['AUTH_GROUP'];
-        $this->_config['AUTH_RULE'] = $prefix.$this->_config['AUTH_RULE'];
-        $this->_config['AUTH_USER'] = $prefix.$this->_config['AUTH_USER'];
-        $this->_config['AUTH_GROUP_ACCESS'] = $prefix.$this->_config['AUTH_GROUP_ACCESS'];
+        $this->_config['AUTH_ON'] = true;
+        $this->_config['AUTH_TYPE'] = 1;
+        $this->_config['AUTH_GROUP'] = $prefix.$config['AUTH_GROUP'];
+        $this->_config['AUTH_RULE'] = $prefix.$config['AUTH_RULE'];
+        $this->_config['AUTH_USER'] = $prefix.$config['AUTH_USER'];
+        $this->_config['AUTH_GROUP_ACCESS'] = $prefix.$config['AUTH_GROUP_ACCESS'];
     }
 
     /**
@@ -87,7 +89,7 @@ class Auth{
             'a.uid' => $uid,
             'g.status' => 1
         );
-        $user_groups = $this->CI->db->select('uid,group_id,title,rules')->from($this->_config['AUTH_GROUP_ACCESS'].' as a')->where($map)->join($this->_config['AUTH_GROUP'].' as g','a.group_id=g.id')->get()->result_array();
+        $user_groups = $this->CI->db->from($this->_config['AUTH_GROUP_ACCESS'].' as a')->where($map)->join($this->_config['AUTH_GROUP'].' as g','a.group_id=g.id')->get()->result_array();
         $groups[$uid]=$user_groups?:array();
         return $groups[$uid];
     }

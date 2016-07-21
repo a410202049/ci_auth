@@ -1,0 +1,48 @@
+</head>
+<body class="top-navigation">
+    <div id="wrapper">
+    
+        <div id="page-wrapper" class="gray-bg">
+            <div class="row border-bottom white-bg">
+                <nav class="navbar navbar-static-top" role="navigation">
+                    <div class="navbar-header">
+                        <button aria-controls="navbar" aria-expanded="false" data-target="#navbar" data-toggle="collapse" class="navbar-toggle collapsed" type="button">
+                            <i class="fa fa-reorder"></i>
+                        </button>
+                        <a href="<?php echo base_url('admin/Platform/index');?>" >
+                            <img src="<?php echo base_url('public/admin/img/eptonic.jpg');?>" width="190px" height="50px">
+                        </a>
+                    </div>
+
+                    <div class="navbar-collapse collapse" id="navbar">
+                        <ul class="nav navbar-nav">
+                        <?php foreach ($dataMenu as $item): ?>
+                            <?php if(!empty($item['sub'])){?>
+                                <li class="dropdown">
+                                    <a aria-expanded="false" role="button" href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown"><?php echo lang($item['title_language']);?><span class="caret"></span></a>
+                                    <ul role="menu" class="dropdown-menu">
+                                        <?php foreach($item['sub'] as $sub):?>
+                                            <li>
+                                                <a  href="<?php if($sub['name']){ echo base_url('admin/'.$sub['name']);}else{ echo 'javascript:void(0);';}?>"><?php echo lang($sub['title_language']);?></a>
+                                            </li>
+                                        <?php endforeach;?> 
+                                    </ul>
+                                </li>
+                                <?php }else{?>
+                                    <li><a  href="<?php if($item['name']){ echo base_url('admin/'.$item['name']);}else{ echo 'javascript:void(0);';}?>"><?php echo lang($item['title_language']);?></a></li>
+                                <?php }?>
+                        <?php endforeach; ?>
+                        </ul>
+                        <ul class="nav navbar-top-links navbar-right">
+                            <li>
+                                <a href="login.html">
+                                    <i class="fa fa-sign-out"></i> 退出
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+
+            <div class="wrapper wrapper-content">
+                <div class="container">
