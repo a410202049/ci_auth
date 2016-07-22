@@ -5,11 +5,7 @@ class Base_Controller extends CI_Controller {
 
     public function __construct()
     {   
-        parent::__construct();
-        $this->config->set_item('language', 'english');//设置语言
-        $this->lang->load('user_menu');//加载语言包
-        $this->load->helper('language');//加载语言辅助函数
-        
+        parent::__construct();        
         //平台权限
         $pt_config = array(
             'AUTH_ON'           => true,
@@ -208,6 +204,13 @@ class Auth_Controller extends Base_Controller{
                 }
             }
 
+            $platform_lang = isset($_COOKIE['platform_lang']) ? $_COOKIE['platform_lang'] : 'zh_cn';
+            $this->config->set_item('language', $platform_lang);//设置语言
+            $this->lang->load('user_menu');//加载语言包
+            $this->load->helper('language');//加载语言辅助函数
+            
+
+
         }else if($userType =='site'){
             // 当前用户为站长
             if(!$this->pt_auth->check($this->router->fetch_class().'/'.$this->router->fetch_method(),$this->uid)){
@@ -232,8 +235,14 @@ class Auth_Controller extends Base_Controller{
                     }
                 }
             }
+
+            $platform_lang = isset($_COOKIE['platform_lang']) ? $_COOKIE['platform_lang'] : 'zh_cn';
+            $this->config->set_item('language', $platform_lang);//设置语言
+            $this->lang->load('user_menu');//加载语言包
+            $this->load->helper('language');//加载语言辅助函数
         }
 
+        $arr['platform_lang'] = $platform_lang;
         $arr['dataMenu'] = $data;
         //判断是平台 还是普通网站
         if($userType =='platform'){

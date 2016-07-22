@@ -6536,3 +6536,12 @@ a.pg_next{
 .hide_logo{
   display: none;
 }
+
+.breadcrumb-platform{
+  padding: 8px 8px;
+  margin-bottom: 15px;
+  border-radius: 0px;
+}
+.wrapper-content-platform{
+  padding-top: 20px;
+}

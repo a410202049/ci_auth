@@ -1,0 +1,231 @@
+<?php $this->load->view('admin/Common/platform_nav.html');?>
+
+
+       <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5><?php echo lang('admin_list');?></h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <a href="javascript:void(0);" class="btn btn-primary add-user"><i class="fa fa-plus"></i>&nbsp;&nbsp;<?php echo lang('add_user');?></a>
+                    <div class="table-box">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th><?php echo lang('username');?></th>
+                                    <th><?php echo lang('user_group');?></th>
+                                    <th><?php echo lang('last_login_ip');?></th>
+                                    <th><?php echo lang('status');?></th>
+                                    <th><?php echo lang('last_login_time');?></th>
+                                    <th><?php echo lang('operation');?></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                             <?php foreach ($admins as $item): ?>
+                                <tr>
+                                        <td><?php echo $item['id']; ?></td>
+                                        <td><?php echo $item['username']; ?></td>
+                                        <td><?php echo $item['title']; ?></td>
+                                        <td><?php echo $item['last_login_ip']; ?></td>
+                                        <td><?php echo $item['status']; ?></td>
+                                        <td><?php echo $item['last_login_time']; ?></td>
+                                        <?php if($item['id'] == 1){?>
+                                            <td><a class="option disable-option"><?php echo $item['disable']; ?></a>|<a class="option disable-option"><?php echo lang('delete');?></a></td>
+                                        <?php }else{?>
+                                            <td><a data-id="<?php echo $item['id']; ?>" class="option <?php echo $item['status'] == lang('enable') ? 'disable-user' : 'enable-user' ;?>"><?php echo $item['disable']; ?></a>|<a data-id="<?php echo $item['id']; ?>" class="option del-user"><?php echo lang('delete');?></a></td>
+                                        <?php }?>
+                                </tr>
+                            <?php endforeach; ?>                          
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 添加用户模态框 -->
+    <div class="modal fade" id="add_user" tabindex="-1" role="dialog" aria-hidden="true">
+       <div class="modal-dialog">
+          <div class="modal-content">
+             <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title"><?php echo lang('add_user');?></h4>
+             </div>
+             <div class="modal-body">
+                <form class="form-horizontal" id="form-add-user" autocomplete="off">
+
+                    <div class="form-group">
+                        <label class="col-lg-3 control-label"><?php echo lang('username');?>：</label>
+                        <div class="col-lg-8">
+                            <input type="text" class="form-control" required="true" name="username">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-3 control-label"><?php echo lang('password');?>：</label>
+                        <div class="col-lg-8">
+                            <input type="password" class="form-control" name="password" id="password">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-3 control-label"><?php echo lang('confirm_password');?>：</label>
+                        <div class="col-lg-8">
+                            <input type="password" class="form-control" name="cpassword"> 
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-3 control-label"><?php echo lang('select_group');?>：</label>
+                        <div class="col-sm-8">
+                            <select class="form-control m-b" name="groupid" id="groupOption">
+                                <?php foreach ($groups as $item): ?>
+                                    <option value="<?php echo $item['id'];?>"><?php echo $item['title'];?></option>
+                                <?php endforeach; ?> 
+
+                            </select>                            
+                        </div>
+                    </div>
+                    
+
+                    <div class="form-group">
+                        <div class="col-sm-5 col-sm-offset-3">
+                            <button type="submit" class="btn btn-primary"><?php echo lang("confirm");?></button>
+                            <button type="button" class="btn btn-default col-sm-offset-1" data-dismiss="modal"><?php echo lang("cancel");?></button>
+                        </div>
+                    </div>
+                </form>
+             </div>
+          </div>
+        </div>
+
+    <script type="text/javascript">
+        window.onload = function(){
+            $('.disable-user').click(function(){
+                var id = $(this).data('id');
+                disable_user(id);
+            })
+
+            $('.enable-user').click(function(){
+                var id = $(this).data('id');
+                enable_user(id);
+            })
+
+            $('.del-user').click(function(){
+                var id = $(this).data('id');
+                del_user(id);
+            })
+
+            $('.add-user').click(function(){
+                $('#add_user').modal('show');
+            })
+
+           $("#form-add-user").validate({
+                rules: {
+                  username:"required",
+                  password:"required",
+                  cpassword: {
+                    required:true,
+                    equalTo: "#password"
+                  },
+                },
+                messages: {
+                  username:"<?php echo lang('please_input');?><?php echo lang('username');?>",
+                  password: "<?php echo lang('please_input');?><?php echo lang('password');?>",
+                  cpassword:  {
+                    required:"<?php echo lang('please_input');?><?php echo lang('confirm_password');?>",
+                    equalTo:"<?php echo lang('t_pass_not_consistent');?>"
+                  },
+                },
+                submitHandler:function(form){
+                    $.ajax({
+                     type: "POST",
+                     url: "<?php echo base_url('admin/Platform/addUser');?>",
+                     data: $(form).serialize(),
+                     dataType: "json",
+                     success: function(data){
+                        if(data.status=='success'){
+                            $('#add_user').modal('hide');
+                            layer.msg(data.message,{icon: 1});
+                            window.location.reload(true);
+                        }else{
+                            layer.msg(data.message,{icon: 2});
+                        }
+                     }})
+                }
+            })
+
+            function disable_user(id){
+                 layer.confirm('<?php echo lang("are_you_sure").lang("disable").lang("this").lang("user");?>？',{btn:['<?php echo lang("confirm");?>','<?php echo lang("cancel");?>'],icon: 3, title:'<?php echo lang("confirm").lang("disable").lang("user");?>'}, function(index){
+                    $.ajax({
+                        type:"POST",
+                        url:"<?php echo base_url('admin/Platform/disableUser');?>",
+                        data:{id:id},
+                        dataType:"json",
+                        success:function(data){
+                            if(data.status=='success'){
+                                layer.msg(data.message,{icon: 1});
+                                window.location.reload(true);
+                                layer.close(index);
+                            }else{
+                                layer.msg(data.message,{icon: 2});
+                            }
+                        }
+                    })
+                 })
+            }
+
+            function enable_user(id){
+                 layer.confirm('<?php echo lang("are_you_sure").lang("enable").lang("this").lang("user");?>？',{btn:['<?php echo lang("confirm");?>','<?php echo lang("cancel");?>'],icon: 3, title:'<?php echo lang("confirm").lang("enable").lang("user");?>'}, function(index){
+                    $.ajax({
+                        type:"POST",
+                        url:"<?php echo base_url('admin/Platform/disableUser');?>",
+                        data:{id:id},
+                        dataType:"json",
+                        success:function(data){
+                            if(data.status=='success'){
+                                layer.msg(data.message,{icon: 1});
+                                window.location.reload(true);
+                                layer.close(index);
+                            }else{
+                                layer.msg(data.message,{icon: 2});
+                            }
+                        }
+                    })
+                 })
+            }
+
+            function del_user(id){
+                layer.confirm('<?php echo lang("are_you_sure").lang("delete").lang("this").lang("user");?>？',{btn:['<?php echo lang("confirm");?>','<?php echo lang("cancel");?>'],icon: 3, title:'<?php echo lang("confirm").lang("delete").lang("user");?>'}, function(index){
+                    $.ajax({
+                        type:"POST",
+                        url:"<?php echo base_url('admin/Platform/delUser');?>",
+                        data:{id:id},
+                        dataType:"json",
+                        success:function(data){
+                            if(data.status=='success'){
+                                layer.msg(data.message,{icon: 1});
+                                window.location.reload(true);
+                                layer.close(index);
+                            }else{
+                                layer.msg(data.message,{icon: 2});
+                            }
+                        }
+                    })
+                }) 
+            }
+
+        } 
+    </script>
+<?php $this->load->view('admin/Common/platform_footer.html');?>          
+
+
+

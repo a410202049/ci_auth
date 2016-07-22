@@ -512,11 +512,4 @@ $config['rewrite_short_tags'] = FALSE;
 */
 $config['proxy_ips'] = '';
 
-$config['leve'] = array(
-	'1'=> '大区经理',
-	'2'=> '城市经理',
-	'3'=> '区域经理',
-	'4'=> '店秘',
-	'5'=> '店经理',
-	'6'=> '销售顾问'
-);
+$config['support_language'] = array('zh_cn','english');

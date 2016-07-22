@@ -34,9 +34,20 @@
                         <?php endforeach; ?>
                         </ul>
                         <ul class="nav navbar-top-links navbar-right">
+                            <?php $languages = $this->config->item('support_language');?>
+                            <li class="dropdown">
+                                <a aria-expanded="false" role="button" href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown"><?php echo lang($platform_lang);?><span class="caret"></span></a>
+                                <ul class="dropdown-menu" role="menu">
+                                    <?php foreach($languages as $language):?>
+                                    <li>
+                                        <a href="javascript:void(0);" class="set_lang" data-lang='<?php echo $language;?>'><?php echo lang($language);?></a>
+                                    </li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </li>
                             <li>
-                                <a href="login.html">
-                                    <i class="fa fa-sign-out"></i> 退出
+                                <a href="<?php echo base_url('admin/Index/logout');?>">
+                                    <i class="fa fa-sign-out"></i><?php echo lang('logout');?>
                                 </a>
                             </li>
                         </ul>
@@ -44,5 +55,6 @@
                 </nav>
             </div>
 
-            <div class="wrapper wrapper-content">
+            <div class="wrapper wrapper-content-platform">
                 <div class="container">
+                <div class="row">
