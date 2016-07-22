@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50547
 File Encoding         : 65001
 
-Date: 2016-07-21 19:00:06
+Date: 2016-07-22 18:05:39
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -41,7 +41,11 @@ INSERT INTO `esc_auth_rule` VALUES ('1', 'platform_homepage', 'Platform/index', 
 INSERT INTO `esc_auth_rule` VALUES ('2', 'site_manage', '', '0', '50', '1461304352', null, '1', null, '站点管理', 'platform');
 INSERT INTO `esc_auth_rule` VALUES ('3', 'site_list', 'Platform/siteList', '2', '50', '1461304352', null, '1', null, '站点列表', 'platform');
 INSERT INTO `esc_auth_rule` VALUES ('4', 'create_site', 'Platform/createSite', '2', '50', '1461304352', null, '1', null, '创建站点', 'platform');
-INSERT INTO `esc_auth_rule` VALUES ('5', 'site_setting', 'Platform/siteSetting', '0', '50', '1461304352', null, '1', null, '站点设置', 'platform');
+INSERT INTO `esc_auth_rule` VALUES ('5', 'system_setting', 'Platform/siteSetting', '0', '50', '1461304352', null, '1', null, '站点设置', 'platform');
+INSERT INTO `esc_auth_rule` VALUES ('6', 'admin_setting', '', '0', '50', '1461304352', null, '1', null, '管理员设置', 'platform');
+INSERT INTO `esc_auth_rule` VALUES ('7', 'auth_menu', 'Platform/authMenu', '6', '50', '1461304352', null, '1', null, '权限菜单', 'platform');
+INSERT INTO `esc_auth_rule` VALUES ('8', 'admin_list', 'Platform/adminList', '6', '50', '1461304352', null, '1', null, '管理员列表', 'platform');
+INSERT INTO `esc_auth_rule` VALUES ('9', 'group_list', 'Platform/groupList', '6', '50', '1461304352', null, '1', null, '用户组列表', 'platform');
 
 -- ----------------------------
 -- Table structure for `esc_pt_group`
@@ -54,13 +58,14 @@ CREATE TABLE `esc_pt_group` (
   `rules` text NOT NULL,
   `create_time` int(11) DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=54 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=55 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of esc_pt_group
 -- ----------------------------
-INSERT INTO `esc_pt_group` VALUES ('1', '平台管理员', '1', '1,2,3,4', '1461318997');
+INSERT INTO `esc_pt_group` VALUES ('1', '平台管理员', '1', '1,2,3,4,9', '1461318997');
 INSERT INTO `esc_pt_group` VALUES ('2', '平台编辑员', '1', '1,2', '1461318997');
+INSERT INTO `esc_pt_group` VALUES ('54', '22221', '1', '1,2,3,4,9', '1469179683');
 
 -- ----------------------------
 -- Table structure for `esc_pt_group_access`
@@ -78,7 +83,12 @@ CREATE TABLE `esc_pt_group_access` (
 -- Records of esc_pt_group_access
 -- ----------------------------
 INSERT INTO `esc_pt_group_access` VALUES ('1', '1');
-INSERT INTO `esc_pt_group_access` VALUES ('2', '2');
+INSERT INTO `esc_pt_group_access` VALUES ('4', '1');
+INSERT INTO `esc_pt_group_access` VALUES ('5', '2');
+INSERT INTO `esc_pt_group_access` VALUES ('7', '1');
+INSERT INTO `esc_pt_group_access` VALUES ('8', '1');
+INSERT INTO `esc_pt_group_access` VALUES ('9', '1');
+INSERT INTO `esc_pt_group_access` VALUES ('10', '1');
 
 -- ----------------------------
 -- Table structure for `esc_site`
@@ -151,11 +161,14 @@ CREATE TABLE `esc_user` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `username_unique` (`username`) USING BTREE,
   KEY `username` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COMMENT='管理员数据表';
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COMMENT='管理员数据表';
 
 -- ----------------------------
 -- Records of esc_user
 -- ----------------------------
-INSERT INTO `esc_user` VALUES ('1', 'admin', '21232f297a57a5a743894a0e4a801fc3', '410202049@qq.com', '', '1', '1469098161', '127.0.0.1', 'avatar578f50d54ebf9_314_name1.jpg', 'platform', '0');
-INSERT INTO `esc_user` VALUES ('2', 'kerry', '21232f297a57a5a743894a0e4a801fc3', '410202049@qq.com', '111', '1', '1469097860', '127.0.0.1', 'avatar578f50d54ebf9_314_name1.jpg', 'platform', '0');
-INSERT INTO `esc_user` VALUES ('3', 'zero', '21232f297a57a5a743894a0e4a801fc3', '', '', '1', null, null, null, 'ordinary', '0');
+INSERT INTO `esc_user` VALUES ('1', 'admin', '21232f297a57a5a743894a0e4a801fc3', '410202049@qq.com', '', '1', '1469157668', '127.0.0.1', 'avatar578f50d54ebf9_314_name1.jpg', 'platform', '0');
+INSERT INTO `esc_user` VALUES ('4', 'baicai', 'e10adc3949ba59abbe56e057f20f883e', '', '', '1', '1469170319', '0.0.0.0', null, 'ordinary', '0');
+INSERT INTO `esc_user` VALUES ('5', 'kerry123', 'e10adc3949ba59abbe56e057f20f883e', '', '', '1', '1469170343', '0.0.0.0', null, 'ordinary', '0');
+INSERT INTO `esc_user` VALUES ('8', 'kerry', 'e10adc3949ba59abbe56e057f20f883e', '', '', '1', '1469174794', '0.0.0.0', null, 'platform', '0');
+INSERT INTO `esc_user` VALUES ('9', '9999', 'fa246d0262c3925617b0c72bb20eeb1d', '', '', '1', '1469174808', '0.0.0.0', null, 'platform', '0');
+INSERT INTO `esc_user` VALUES ('10', '1111', 'b59c67bf196a4758191e42f76670ceba', '', '', '1', '1469174843', '0.0.0.0', null, 'platform', '0');
