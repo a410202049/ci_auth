@@ -69,3 +69,6 @@ $lang['menu_name'] = '菜单名称';
 $lang['menu'] = '菜单';
 $lang['select_level'] = '选择层级';
 $lang['current_menu_sub_menu'] = '当前菜单下存在子菜单';
+$lang['username_or_password_is_incorrect'] = '用户名或者密码不正确';
+$lang['verification_code_error'] = '验证码错误';
+$lang['platform_setting'] = '平台设置';

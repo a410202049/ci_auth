@@ -26,16 +26,16 @@ class Index extends Base_Controller {
 		}
 		$code = $this->input->post('code');
 		if(strtoupper($code) != $_SESSION['code']){
-			$this->session->set_flashdata('error', "验证码错误");
+			$this->session->set_flashdata('error', lang('verification_code_error'));//验证码错误
 		}
 		$username = $this->input->post('username');
 		$password = $this->input->post('password');
 		$this->load->model('user_model', 'user');
 		$userData = $this->user->getUser($username);
 
-		if(!$userData || $userData['password'] != md5($password)) $this->session->set_flashdata('error', "用户名或者密码不正确");
+		if(!$userData || $userData['password'] != md5($password)) $this->session->set_flashdata('error', lang('username_or_password_is_incorrect'));
 		$userType = $userData['user_type'];
-		if($userType=='ordinary') $this->session->set_flashdata('error', "用户名或者密码不正确");
+		if($userType=='ordinary') $this->session->set_flashdata('error', lang('username_or_password_is_incorrect'));
 		if($this->session->flashdata('error')){
 			redirect(base_url('admin/Index'));
 		}

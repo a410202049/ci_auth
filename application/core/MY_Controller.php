@@ -29,6 +29,11 @@ class Base_Controller extends CI_Controller {
         $this->load->library('auth',$pt_config,'pt_auth');
         $this->load->library('auth',$site_config,'site_auth');
 
+        $platform_lang = isset($_COOKIE['platform_lang']) ? $_COOKIE['platform_lang'] : 'zh_cn';
+        $this->config->set_item('language', $platform_lang);//设置语言
+        $this->platform_lang = $platform_lang;
+        $this->lang->load('user_menu');//加载语言包
+        $this->load->helper('language');//加载语言辅助函数
 
     }
 
@@ -204,10 +209,7 @@ class Auth_Controller extends Base_Controller{
                 }
             }
 
-            $platform_lang = isset($_COOKIE['platform_lang']) ? $_COOKIE['platform_lang'] : 'zh_cn';
-            $this->config->set_item('language', $platform_lang);//设置语言
-            $this->lang->load('user_menu');//加载语言包
-            $this->load->helper('language');//加载语言辅助函数
+
             
 
 
@@ -236,13 +238,10 @@ class Auth_Controller extends Base_Controller{
                 }
             }
 
-            $platform_lang = isset($_COOKIE['platform_lang']) ? $_COOKIE['platform_lang'] : 'zh_cn';
-            $this->config->set_item('language', $platform_lang);//设置语言
-            $this->lang->load('user_menu');//加载语言包
-            $this->load->helper('language');//加载语言辅助函数
+
         }
 
-        $arr['platform_lang'] = $platform_lang;
+        $arr['platform_lang'] = $this->platform_lang;
         $arr['dataMenu'] = $data;
         //判断是平台 还是普通网站
         if($userType =='platform'){

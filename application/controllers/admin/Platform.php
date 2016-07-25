@@ -321,5 +321,20 @@ class Platform extends Auth_Controller {
     }
 
 
+    /**
+     * [siteSetting 平台站点设置]
+     * @return [type] [description]
+     */
+    public function siteSetting(){
+        if(IS_POST){
+            echo "ssss";
+        }else{
+            $languages = $this->config->item('support_language');
+            $data['languages'] = $languages;
+            $this->load->view('admin/Platform/siteSeting.html',$data);
+        }
+
+
+    }
 
 }

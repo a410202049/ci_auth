@@ -69,3 +69,6 @@ $lang['menu_name'] = 'menu name';
 $lang['menu'] = 'menu';
 $lang['select_level'] = 'select level';
 $lang['current_menu_sub_menu'] = 'Under the current menu, there is a sub menu';
+$lang['username_or_password_is_incorrect'] = 'username or password is incorrect';
+$lang['verification_code_error'] = 'Verification code error';
+$lang['platform_setting'] = 'platform setting';
