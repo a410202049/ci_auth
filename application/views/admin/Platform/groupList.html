@@ -51,7 +51,7 @@
             })
 
             function del_group(id){
-                layer.confirm('您确定要删除此用户组？', {icon: 3, title:'确认删除用户组'}, function(index){
+                layer.confirm('<?php echo lang("confirm").lang("delete").lang("this").lang("user_group");?>？', {icon: 3, title:'<?php echo lang("confirm").lang("delete").lang("user_group");?>'}, function(index){
                     $.ajax({
                         type:"POST",
                         url:"/admin/AuthMenu/delGroup",

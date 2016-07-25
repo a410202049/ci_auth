@@ -184,5 +184,142 @@ class Platform extends Auth_Controller {
         }
     }
 
+    /**
+     * 平台权限菜单列表
+     */
+
+    public function authMenu(){
+        $rules = $this->db->order_by('sort', 'asc')->get_where('auth_rule',array('rule_type'=>'platform'))->result_array();
+        foreach ($rules as $key => $value) {
+            $rules[$key]['order'] = $value['sort'];
+            $rules[$key]['parentid']= $value['pid'];
+            $rules[$key]['name'] = lang($value['title_language']);
+            $rules[$key]['title'] = $value['name'];
+            $rules[$key]['isshow'] = $value['isshow']?'√':'×';
+            $rules[$key]['create_time'] = date('Y-m-d H:i:s', $value['create_time']);
+        }
+        $this->load->library('tree');
+        $this->tree->icon = array('&nbsp;&nbsp;&nbsp;','&nbsp;&nbsp;&nbsp;├─ ','&nbsp;&nbsp;&nbsp;└─ ');
+        $this->tree->nbsp = '&nbsp;&nbsp;&nbsp;';
+        $this->tree->init($rules);
+        $str = "<option value=\$id >\$spacer\$name</option>";
+        $menus = $this->tree->get_tree(0,$str,1);
+        $tdStr = "<tr>
+                    <td width='60px'><input type='text' class='form-control' name='order[\$id]' value='\$order'></td>
+                    <td>\$id</td>
+                    <td>\$spacer\$name</td>
+                    <td>\$title</td>
+                    <td><font color='red'>\$isshow</font></td>
+                    <td>\$create_time</td>
+                    <td><a class='option edit-menu' data-val='\$id'>".lang('edit')."</a>|<a class='option del-menu' data-val='\$id'>".lang('delete')."</a></td>
+                </tr>";
+        $this->tree->init($rules);
+        $tr = $this->tree->get_tree(0, $tdStr);
+        $arr['menus'] = $menus;
+        $arr['tr'] = $tr;
+        $this->load->view('admin/Platform/authMenu.html',$arr);    
+    }
+
+
+    /**
+     * 获取不包含本身菜单的层级
+     */
+    public function ajaxGetMenu(){
+        if(IS_AJAX){
+           $mid = trim($this->input->post('id'));
+            $rules = $this->db->order_by('sort', 'asc')->get_where('auth_rule',array('id!='=>$mid,'rule_type'=>'platform'))->result_array();
+            foreach ($rules as $key => $value) {
+                $rules[$key]['order'] = $value['sort'];
+                $rules[$key]['parentid']= $value['pid'];
+                $rules[$key]['name'] = lang($value['title_language']);
+                $rules[$key]['title'] = $value['name'];
+                $rules[$key]['isshow'] = $value['isshow']?'√':'×';
+                $rules[$key]['create_time'] = date('Y-m-d H:i:s', $value['create_time']);
+            }
+            $this->load->library('tree');
+            $this->tree->icon = array('&nbsp;&nbsp;&nbsp;','&nbsp;&nbsp;&nbsp;├─ ','&nbsp;&nbsp;&nbsp;└─ ');
+            $this->tree->nbsp = '&nbsp;&nbsp;&nbsp;';
+            $this->tree->init($rules);
+            $str = "<option value=\$id >\$spacer\$name</option>";
+            $menus = $this->tree->get_tree(0,$str,1);
+            $arr['menus'] = '<option value="0">--'.lang('top_menu').'--</option>'.$menus;
+            $info = $this->db->select('id,pid,isshow,title_language')->get_where('auth_rule',array('id='=>$mid))->row_array();
+            $arr['info'] = $info;
+            $this->response_data('success',lang('success'),$arr);
+
+        }
+    }
+
+
+    /**
+     * 编辑保存菜单
+     */
+
+    public function saveMenu(){
+        if(IS_AJAX){
+            $id = $this->input->post('id');
+            $is_show = $this->input->post('is_show');
+            $pid = $this->input->post('pid');
+            $menu_title = $this->input->post('menu_title');
+            if(empty($menu_title)){
+                $this->response_data('error',lang('language_config').lang('cant_empty'));
+            }
+            $this->db->update('auth_rule', array('title_language'=>$menu_title,'isshow'=>$is_show,'pid'=>$pid), array('id'=>$id));
+            $this->response_data('success',lang('menu').lang('edit_success'));
+        }
+    }
+
+    /**
+     * [delMenu 删除菜单]
+     */
+    public function delMenu(){
+        if(IS_AJAX){
+            $id = $this->input->post('id');
+            $data = $this->db->get_where('auth_rule', array('pid'=>$id))->result_array();
+            if($data){
+                $this->response_data('error',lang('current_menu_sub_menu'));
+            }else{
+                $this->db->delete('auth_rule', array('id'=>$id));
+                $this->response_data('success',lang('delete').lang('success'));
+            }
+        }
+
+    }
+
+    /**
+     * [addMenu 添加菜单]
+     */
+    public function addMenu(){
+        if(IS_AJAX){
+            $title = trim($this->input->post('title'));
+            $pid = $this->input->post('pid');
+            if(!$title){
+                $this->response_data('error',lang('language_config').lang('cant_empty'));
+            }
+            $data = $this->db->get_where('auth_rule', array('title_language'=>$title,'pid'=>$pid))->row_array();
+            if($data){
+                $this->response_data('error',lang('language_config').lang('already_exist'));
+            }            
+
+            $arr = $this->input->post();
+            $arr['create_time'] = time();
+            $arr['title_language'] = $arr['title'];
+            unset($arr['title']);
+            $status = $this->db->insert('auth_rule', $arr);
+            if($status){
+                $this->response_data('success',lang('add_menu').lang('success'));
+            }
+        }
+    }
+
+    public function order(){
+        $orders = $this->input->post('order');
+        foreach ($orders as $key => $value) {
+            $this->db->update('auth_rule', array('sort'=>$value), array('id'=>$key));
+        }
+        $this->response_data('success','排序成功');
+    }
+
+
 
 }
